@@ -1,1001 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>XUNIVERSE — Marshall's Personal Universe</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Syne:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
-<style>
-/* ══════════ RESET ══════════ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#060810;
-  --bg2:#0a0f1c;
-  --bg3:#0f1628;
-  --surface:#141e35;
-  --surface2:#1a2540;
-  --border:#1f2e4a;
-  --border2:#263558;
-  --accent:#3d7fff;
-  --accent-glow:rgba(61,127,255,0.25);
-  --gold:#f5c842;
-  --gold-dim:rgba(245,200,66,0.15);
-  --green:#36e8a0;
-  --red:#ff5a5a;
-  --text:#dde4f5;
-  --text2:#c0cce8;
-  --muted:#6b7fa0;
-  --muted2:#4a5870;
-}
-html{scroll-behavior:smooth}
-body{
-  font-family:'Syne',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
-  cursor:default;
-}
-
-/* ══════════ ANIMATED STAR FIELD ══════════ */
-.starfield{
-  position:fixed;inset:0;z-index:0;
-  overflow:hidden;pointer-events:none;
-}
-.starfield::before,.starfield::after{
-  content:'';position:absolute;inset:0;
-}
-.starfield::before{
-  background-image:
-    radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,0.7) 0%,transparent 100%),
-    radial-gradient(1px 1px at 25% 35%,rgba(255,255,255,0.4) 0%,transparent 100%),
-    radial-gradient(1.5px 1.5px at 40% 8%,rgba(255,255,255,0.6) 0%,transparent 100%),
-    radial-gradient(1px 1px at 55% 70%,rgba(255,255,255,0.5) 0%,transparent 100%),
-    radial-gradient(1px 1px at 70% 25%,rgba(255,255,255,0.4) 0%,transparent 100%),
-    radial-gradient(2px 2px at 85% 55%,rgba(255,255,255,0.6) 0%,transparent 100%),
-    radial-gradient(1px 1px at 15% 80%,rgba(255,255,255,0.3) 0%,transparent 100%),
-    radial-gradient(1px 1px at 92% 15%,rgba(255,255,255,0.5) 0%,transparent 100%),
-    radial-gradient(1px 1px at 48% 48%,rgba(255,255,255,0.3) 0%,transparent 100%),
-    radial-gradient(1.5px 1.5px at 62% 90%,rgba(255,255,255,0.4) 0%,transparent 100%),
-    radial-gradient(1px 1px at 32% 58%,rgba(255,255,255,0.35) 0%,transparent 100%),
-    radial-gradient(1px 1px at 78% 42%,rgba(255,255,255,0.45) 0%,transparent 100%);
-  animation:twinkle 6s ease-in-out infinite alternate;
-}
-.starfield::after{
-  background-image:
-    radial-gradient(1px 1px at 18% 45%,rgba(61,127,255,0.4) 0%,transparent 100%),
-    radial-gradient(1px 1px at 52% 22%,rgba(245,200,66,0.3) 0%,transparent 100%),
-    radial-gradient(1.5px 1.5px at 73% 68%,rgba(61,127,255,0.35) 0%,transparent 100%),
-    radial-gradient(1px 1px at 88% 88%,rgba(54,232,160,0.3) 0%,transparent 100%),
-    radial-gradient(1px 1px at 35% 92%,rgba(255,255,255,0.3) 0%,transparent 100%);
-  animation:twinkle 8s ease-in-out infinite alternate-reverse;
-}
-@keyframes twinkle{
-  0%{opacity:0.6}50%{opacity:1}100%{opacity:0.7}
-}
-
-/* ══════════ PAGE SYSTEM ══════════ */
-.page{display:none;min-height:100vh;position:relative;z-index:1;flex-direction:column}
-.page.active{display:flex}
-
-/* ══════════ LOGIN ══════════ */
-#login{
-  align-items:center;justify-content:center;
-  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(61,127,255,0.08) 0%,transparent 70%);
-}
-.login-card{
-  width:100%;max-width:440px;
-  background:rgba(10,15,28,0.92);
-  border:1px solid var(--border2);
-  border-radius:24px;
-  padding:52px 44px;
-  backdrop-filter:blur(24px);
-  box-shadow:0 0 0 1px rgba(61,127,255,0.08),0 32px 80px rgba(0,0,0,0.6),0 0 60px rgba(61,127,255,0.06);
-  animation:loginIn 0.7s cubic-bezier(0.16,1,0.3,1);
-}
-@keyframes loginIn{
-  from{opacity:0;transform:translateY(30px) scale(0.97)}
-  to{opacity:1;transform:none}
-}
-.xlogo{
-  text-align:center;margin-bottom:4px;
-  font-family:'Orbitron',monospace;
-  font-size:2.2rem;font-weight:900;
-  letter-spacing:0.25em;
-  background:linear-gradient(135deg,#3d7fff 0%,#a0c0ff 40%,#f5c842 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.xlogo-sub{
-  text-align:center;
-  font-size:0.72rem;letter-spacing:0.3em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:40px;
-}
-.field-label{
-  display:block;font-size:0.72rem;font-weight:600;
-  letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:8px;
-}
-.field-input{
-  width:100%;padding:13px 16px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:10px;
-  color:var(--text);
-  font-family:'Syne',sans-serif;font-size:0.95rem;
-  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
-  margin-bottom:16px;
-}
-.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:13px 22px;border-radius:10px;
-  font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:600;
-  cursor:pointer;border:none;transition:all 0.2s;
-  letter-spacing:0.03em;
-}
-.btn-primary{
-  width:100%;
-  background:linear-gradient(135deg,var(--accent) 0%,#1a56cc 100%);
-  color:#fff;
-  box-shadow:0 4px 20px rgba(61,127,255,0.3);
-}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(61,127,255,0.4)}
-.btn-primary:active{transform:translateY(0)}
-.btn-ghost{
-  background:var(--surface);border:1px solid var(--border2);
-  color:var(--text2);
-}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.btn-gold{
-  background:linear-gradient(135deg,var(--gold),#d4a017);
-  color:#07090f;font-weight:700;
-}
-.btn-gold:hover{opacity:0.9;transform:translateY(-1px)}
-.btn-sm{padding:8px 16px;font-size:0.82rem;border-radius:8px}
-.btn-danger{background:rgba(255,90,90,0.15);border:1px solid rgba(255,90,90,0.3);color:var(--red)}
-.btn-danger:hover{background:rgba(255,90,90,0.25)}
-.err-msg{
-  display:none;color:var(--red);
-  font-size:0.82rem;text-align:center;margin-top:10px;
-  padding:8px;background:rgba(255,90,90,0.08);
-  border-radius:8px;border:1px solid rgba(255,90,90,0.2);
-}
-
-/* ══════════ TOPBAR ══════════ */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 40px;
-  background:rgba(6,8,16,0.8);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(16px);
-  position:sticky;top:0;z-index:100;
-  flex-shrink:0;
-}
-.topbar .xlogo{font-size:1.1rem;letter-spacing:0.2em;margin:0;text-align:left}
-.topbar-right{display:flex;align-items:center;gap:10px}
-.user-chip{
-  font-size:0.78rem;color:var(--muted);
-  padding:6px 14px;
-  background:var(--bg3);border:1px solid var(--border);border-radius:100px;
-  letter-spacing:0.05em;
-}
-
-/* ══════════ DASHBOARD ══════════ */
-#dashboard{background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(61,127,255,0.05) 0%,transparent 60%)}
-.dash-body{padding:44px 40px;flex:1}
-.dash-hello{margin-bottom:48px}
-.dash-hello h1{
-  font-size:2rem;font-weight:600;line-height:1.2;margin-bottom:8px;
-}
-.dash-hello h1 em{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;color:var(--gold);font-size:2.4rem;
-}
-.dash-hello p{color:var(--muted);font-size:0.92rem}
-
-.cards-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:20px;
-}
-.dash-card{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:18px;padding:28px 24px;
-  cursor:pointer;transition:all 0.25s;
-  position:relative;overflow:hidden;
-}
-.dash-card::after{
-  content:'';position:absolute;
-  inset:0;border-radius:18px;
-  background:radial-gradient(circle at 50% 0%,var(--card-glow,rgba(61,127,255,0.08)) 0%,transparent 70%);
-  opacity:0;transition:opacity 0.3s;
-}
-.dash-card:hover{
-  transform:translateY(-4px);
-  border-color:var(--card-border,var(--accent));
-  box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 0 1px var(--card-border,var(--accent)) inset;
-}
-.dash-card:hover::after{opacity:1}
-.card-lock-badge{
-  position:absolute;top:18px;right:18px;
-  font-size:0.68rem;color:var(--muted2);
-  display:flex;align-items:center;gap:4px;
-  letter-spacing:0.05em;text-transform:uppercase;
-}
-.card-emoji{font-size:2.4rem;margin-bottom:18px;display:block;line-height:1}
-.card-name{font-size:1rem;font-weight:700;margin-bottom:6px;letter-spacing:0.02em}
-.card-info{font-size:0.8rem;color:var(--muted);line-height:1.55}
-
-/* ══════════ INNER PAGES ══════════ */
-.inner-head{
-  display:flex;align-items:center;gap:16px;
-  padding:16px 40px;
-  background:rgba(6,8,16,0.8);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(16px);
-  position:sticky;top:0;z-index:100;
-  flex-shrink:0;
-}
-.back-btn{
-  background:none;border:none;
-  font-family:'Syne',sans-serif;font-size:0.82rem;
-  color:var(--muted);cursor:pointer;
-  display:flex;align-items:center;gap:6px;
-  padding:6px 10px;border-radius:8px;
-  transition:all 0.2s;
-}
-.back-btn:hover{background:var(--surface);color:var(--accent)}
-.page-title{
-  font-family:'Orbitron',monospace;
-  font-size:0.9rem;font-weight:600;
-  letter-spacing:0.12em;color:var(--text2);
-}
-.inner-body{
-  padding:36px 40px;
-  max-width:860px;margin:0 auto;
-  width:100%;flex:1;
-}
-
-/* ══════════ PASSWORD GATE ══════════ */
-.pass-gate{
-  max-width:400px;margin:60px auto 0;
-  background:var(--bg2);
-  border:1px solid var(--border2);
-  border-radius:20px;padding:44px 36px;
-  text-align:center;
-}
-.pass-gate .gate-icon{font-size:3.2rem;margin-bottom:20px}
-.pass-gate h3{font-size:1.1rem;font-weight:600;margin-bottom:8px}
-.pass-gate p{font-size:0.82rem;color:var(--muted);margin-bottom:28px;line-height:1.6}
-.pass-gate .field-label{text-align:left}
-
-/* ══════════ UPLOAD ZONE ══════════ */
-.upload-zone{
-  border:2px dashed var(--border2);border-radius:14px;
-  padding:36px 20px;text-align:center;
-  cursor:pointer;transition:all 0.25s;
-  background:var(--bg2);position:relative;
-  margin-bottom:28px;
-}
-.upload-zone:hover{border-color:var(--accent);background:rgba(61,127,255,0.04)}
-.upload-zone input[type=file]{
-  display:none;
-}
-.upload-zone .uz-icon{font-size:2.4rem;margin-bottom:12px}
-.upload-zone .uz-main{font-size:0.9rem;margin-bottom:4px}
-.upload-zone .uz-main strong{color:var(--accent)}
-.upload-zone .uz-sub{font-size:0.76rem;color:var(--muted)}
-
-/* ══════════ FILES GRID ══════════ */
-.sec-label{
-  font-size:0.72rem;font-weight:600;letter-spacing:0.12em;
-  text-transform:uppercase;color:var(--muted);margin-bottom:14px;
-}
-.files-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
-  gap:14px;
-}
-.f-item{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;overflow:hidden;
-  position:relative;transition:border-color 0.2s;
-}
-.f-item:hover{border-color:var(--border2)}
-.f-item img,.f-item video{width:100%;height:130px;object-fit:cover;display:block}
-.f-item .f-meta{padding:10px 12px}
-.f-item .f-name{
-  font-size:0.75rem;font-weight:600;color:var(--text2);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;
-}
-.f-item .f-date{font-size:0.68rem;color:var(--muted)}
-.f-del{
-  position:absolute;top:7px;right:7px;
-  background:rgba(6,8,16,0.75);
-  border:none;color:var(--muted);
-  width:26px;height:26px;border-radius:50%;
-  cursor:pointer;font-size:0.72rem;
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;backdrop-filter:blur(4px);
-}
-.f-del:hover{background:var(--red);color:#fff}
-
-/* ══════════ DIVIDER ══════════ */
-.divider{height:1px;background:var(--border);margin:28px 0}
-
-/* ══════════ WISH SECTION ══════════ */
-.wish-form-box{
-  background:var(--bg2);border:1px solid var(--border2);
-  border-radius:16px;padding:28px;margin-bottom:32px;
-}
-.wish-form-box h3{
-  font-size:1rem;font-weight:600;margin-bottom:18px;
-  display:flex;align-items:center;gap:8px;
-}
-.wish-input,.wish-area{
-  width:100%;padding:12px 16px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:10px;color:var(--text);
-  font-family:'Syne',sans-serif;font-size:0.9rem;
-  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
-  margin-bottom:12px;
-}
-.wish-input:focus,.wish-area:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-.wish-area{resize:vertical;min-height:100px}
-.wish-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;padding:20px 22px;
-  margin-bottom:12px;
-  animation:fadeUp 0.35s ease;
-  position:relative;
-}
-.wish-card::before{
-  content:'';position:absolute;left:0;top:16px;bottom:16px;
-  width:3px;background:var(--gold);border-radius:0 2px 2px 0;
-}
-.wish-who{
-  font-size:0.78rem;font-weight:700;color:var(--gold);
-  letter-spacing:0.06em;margin-bottom:8px;
-}
-.wish-body{font-size:0.9rem;color:var(--text2);line-height:1.65}
-.wish-when{font-size:0.68rem;color:var(--muted);margin-top:10px}
-
-/* ══════════ MUSIC ══════════ */
-.track-row{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;padding:18px 20px;
-  margin-bottom:12px;
-  animation:fadeUp 0.35s ease;
-}
-.track-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.track-icon-wrap{
-  width:44px;height:44px;border-radius:12px;
-  background:linear-gradient(135deg,var(--surface2),var(--surface));
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;flex-shrink:0;
-  border:1px solid var(--border2);
-}
-.track-info{flex:1;min-width:0}
-.track-name{
-  font-size:0.9rem;font-weight:600;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  margin-bottom:3px;
-}
-.track-date{font-size:0.72rem;color:var(--muted)}
-.track-del{
-  background:none;border:none;
-  color:var(--muted);cursor:pointer;
-  font-size:1rem;padding:4px;border-radius:6px;
-  transition:color 0.2s;
-}
-.track-del:hover{color:var(--red)}
-.track-row audio{
-  width:100%;height:36px;
-  border-radius:8px;
-  filter:invert(0.85) hue-rotate(195deg) brightness(0.9);
-}
-
-/* ══════════ QUOTE ══════════ */
-.quote-stage{
-  min-height:55vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:40px 20px;
-}
-.q-number{
-  font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:28px;font-weight:600;
-}
-.q-mark{
-  font-family:'Cormorant Garamond',serif;
-  font-size:6rem;line-height:0.6;color:var(--accent);
-  opacity:0.25;margin-bottom:16px;display:block;
-  font-style:italic;
-}
-.q-text{
-  font-size:clamp(1.2rem,2.5vw,1.75rem);
-  font-weight:300;line-height:1.65;
-  color:var(--text);max-width:680px;
-  margin-bottom:24px;
-  animation:fadeUp 0.4s ease;
-}
-.q-author{
-  font-size:0.88rem;font-weight:600;
-  color:var(--gold);letter-spacing:0.08em;
-  animation:fadeUp 0.4s 0.08s ease both;
-}
-.quote-actions{
-  display:flex;gap:12px;justify-content:center;
-  margin-top:36px;flex-wrap:wrap;
-}
-
-/* ══════════ EMPTY STATE ══════════ */
-.empty{
-  text-align:center;padding:60px 20px;
-  color:var(--muted);
-}
-.empty-ico{font-size:3rem;margin-bottom:14px}
-.empty p{font-size:0.88rem;line-height:1.6}
-
-/* ══════════ TOAST ══════════ */
-.toast{
-  position:fixed;bottom:32px;right:32px;z-index:9999;
-  background:var(--green);color:#06080f;
-  font-weight:700;font-size:0.88rem;
-  padding:13px 22px;border-radius:12px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
-  display:none;animation:slideUp 0.3s ease;
-  letter-spacing:0.02em;
-}
-.toast.err{background:var(--red);color:#fff}
-
-/* ══════════ ANIMATIONS ══════════ */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(14px)}
-  to{opacity:1;transform:none}
-}
-@keyframes slideUp{
-  from{transform:translateY(16px);opacity:0}
-  to{transform:none;opacity:1}
-}
-
-/* ══════════ RESPONSIVE ══════════ */
-@media(max-width:640px){
-  .topbar,.inner-head{padding:14px 18px}
-  .dash-body,.inner-body{padding:24px 18px}
-  .login-card{padding:36px 24px;margin:16px}
-  .cards-grid{grid-template-columns:1fr 1fr}
-  .files-grid{grid-template-columns:1fr 1fr}
-  .toast{right:16px;bottom:16px}
-}
-@media(max-width:380px){
-  .cards-grid{grid-template-columns:1fr}
-}
-</style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>XUNIVERSE — Marshall's Personal Universe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Syne:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <style>
+        :root{--bg:#060810;--bg2:#0a0f1c;--bg3:#0f1628;--surface:#141e35;--surface2:#1a2540;--border:#1f2e4a;--border2:#263558;--accent:#3d7fff;--accent-glow:rgba(61,127,255,0.25);--gold:#f5c842;--text:#dde4f5;--muted:#6b7fa0;--red:#ff5a5a;--green:#36e8a0;}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+        .starfield{position:fixed;inset:0;z-index:0;background-image:radial-gradient(1px 1px at 10% 10%,#fff,transparent);pointer-events:none;}
+        .page{display:none;min-height:100vh;position:relative;z-index:1;flex-direction:column;padding:20px;padding-top:80px;}
+        .page.active{display:flex}
+        #login{align-items:center;justify-content:center;padding-top:0;}
+        .login-card{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center;}
+        .xlogo{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;letter-spacing:5px;margin-bottom:30px;color:var(--accent);}
+        .field-input{width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:#fff;margin-bottom:15px;outline:none;}
+        .btn{padding:12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;transition:0.3s;width:100%;background:var(--accent);color:#fff;}
+        .topbar{position:fixed;top:0;left:0;right:0;height:70px;background:rgba(6,8,16,0.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid var(--border);z-index:1000;}
+        .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;width:100%;max-width:1200px;margin:0 auto;}
+        .dash-card{background:var(--bg2);border:1px solid var(--border);padding:30px;border-radius:15px;text-align:center;cursor:pointer;transition:0.3s;}
+        .dash-card:hover{border-color:var(--accent);transform:translateY(-5px);}
+        .upload-zone{border:2px dashed var(--border2);border-radius:12px;padding:40px;text-align:center;background:var(--bg2);margin-bottom:20px;cursor:pointer;}
+        .files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;}
+        .f-item{background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+        .f-item img, .f-item video{width:100%;height:150px;object-fit:cover;}
+        .wish-card{background:var(--bg2);border:1px solid var(--border);padding:15px;border-radius:10px;margin-bottom:10px;}
+        .toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#000;padding:12px 24px;border-radius:8px;display:none;z-index:9999;}
+    </style>
 </head>
 <body>
 
 <div class="starfield"></div>
 <div class="toast" id="toast"></div>
 
-<!-- ════════════════ LOGIN ════════════════ -->
 <div class="page active" id="login">
-  <div class="login-card">
-    <div class="xlogo">XUNIVERSE</div>
-    <div class="xlogo-sub">Marshall's Personal Universe</div>
-
-    <label class="field-label">User ID</label>
-    <input class="field-input" type="text" id="li-id" placeholder="Enter User ID" autocomplete="off" autocorrect="off"/>
-
-    <label class="field-label">Password</label>
-    <input class="field-input" type="password" id="li-pw" placeholder="Enter Password"/>
-
-    <button class="btn btn-primary" onclick="doLogin()">
-      ✦ Enter Universe
-    </button>
-    <div class="err-msg" id="li-err">❌ Invalid User ID or Password. Try again.</div>
-  </div>
+    <div class="login-card">
+        <div class="xlogo">XUNIVERSE</div>
+        <input class="field-input" type="text" id="li-id" placeholder="User ID"/>
+        <input class="field-input" type="password" id="li-pw" placeholder="Password"/>
+        <button class="btn" onclick="doLogin()">✦ ENTER</button>
+        <p id="li-err" style="color:var(--red);margin-top:10px;display:none;">Wrong Credentials</p>
+    </div>
 </div>
 
-<!-- ════════════════ DASHBOARD ════════════════ -->
 <div class="page" id="dashboard">
-  <div class="topbar">
-    <div class="xlogo">XUNIVERSE</div>
-    <div class="topbar-right">
-      <div class="user-chip">👤 Marshall</div>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Logout</button>
-    </div>
-  </div>
-  <div class="dash-body">
-    <div class="dash-hello">
-      <h1>Welcome back, <em>Marshall</em> ✦</h1>
-      <p>Your personal universe. Choose a section to begin.</p>
-    </div>
+    <div class="topbar"><div class="xlogo" style="font-size:1rem;margin:0;">XUNIVERSE</div><button onclick="location.reload()" style="background:none;border:none;color:var(--muted);cursor:pointer;">Logout</button></div>
     <div class="cards-grid">
-      <div class="dash-card" style="--card-border:#3d7fff;--card-glow:rgba(61,127,255,0.1)" onclick="gotoPage('pg-personal')">
-        <div class="card-lock-badge">🔒 Private</div>
-        <span class="card-emoji">🗂️</span>
-        <div class="card-name">Personal Folder</div>
-        <div class="card-info">Store your private pictures and videos securely. Password protected.</div>
-      </div>
-      <div class="dash-card" style="--card-border:#f5c842;--card-glow:rgba(245,200,66,0.08)" onclick="gotoPage('pg-wish')">
-        <span class="card-emoji">🌟</span>
-        <div class="card-name">Wish Me</div>
-        <div class="card-info">Friends and visitors can leave their wishes and messages here for you.</div>
-      </div>
-      <div class="dash-card" style="--card-border:#ff5a5a;--card-glow:rgba(255,90,90,0.08)" onclick="gotoPage('pg-store')">
-        <div class="card-lock-badge">🔒 Admin</div>
-        <span class="card-emoji">📁</span>
-        <div class="card-name">Store File</div>
-        <div class="card-info">Anyone can upload files here. Only you can view and access what's stored.</div>
-      </div>
-      <div class="dash-card" style="--card-border:#a78bfa;--card-glow:rgba(167,139,250,0.08)" onclick="gotoPage('pg-music')">
-        <span class="card-emoji">🎵</span>
-        <div class="card-name">Music</div>
-        <div class="card-info">Upload your recordings, songs, and audio files. Listen anytime.</div>
-      </div>
-      <div class="dash-card" style="--card-border:#36e8a0;--card-glow:rgba(54,232,160,0.08)" onclick="gotoPage('pg-quote')">
-        <span class="card-emoji">💬</span>
-        <div class="card-name">Quote of the Day</div>
-        <div class="card-info">A fresh inspiring thought every day. 55+ handpicked quotes.</div>
-      </div>
+        <div class="dash-card" onclick="gotoPage('pg-personal')"><h3>🔒 Private</h3><p>Personal Folder</p></div>
+        <div class="dash-card" onclick="gotoPage('pg-wish')"><h3>🌟 Wish Me</h3><p>Leave a Message</p></div>
+        <div class="dash-card" onclick="gotoPage('pg-store')"><h3>📁 Store</h3><p>Public Files</p></div>
+        <div class="dash-card" onclick="gotoPage('pg-music')"><h3>🎵 Music</h3><p>Audio Tracks</p></div>
     </div>
-  </div>
 </div>
 
-<!-- ════════════════ PERSONAL FOLDER ════════════════ -->
 <div class="page" id="pg-personal">
-  <div class="inner-head">
-    <button class="back-btn" onclick="gotoPage('dashboard')">← Back</button>
-    <div class="page-title">🗂️ &nbsp;PERSONAL FOLDER</div>
-  </div>
-  <div class="inner-body">
-    <!-- Gate -->
+    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
     <div id="pf-gate">
-      <div class="pass-gate">
-        <div class="gate-icon">🔐</div>
-        <h3>Personal Folder</h3>
-        <p>This is your private folder. Enter the folder password to access your pictures and videos.</p>
-        <label class="field-label">Folder Password</label>
-        <input class="field-input" type="password" id="pf-pw" placeholder="Enter password" style="margin-bottom:16px"/>
-        <button class="btn btn-primary" onclick="unlockPF()">Unlock Folder</button>
-        <div class="err-msg" id="pf-err">❌ Incorrect password</div>
-      </div>
+        <input class="field-input" type="password" id="pf-pw" placeholder="Folder Password"/>
+        <button class="btn" onclick="unlockFolder('personal')">Unlock</button>
     </div>
-    <!-- Content -->
-    <div id="pf-content" style="display:none">
-      <div class="sec-label">Upload Files</div>
-      <div class="upload-zone" id="pf-zone">
-        <input type="file" id="pf-file" multiple accept="image/*,video/*"/>
-        <div class="uz-icon">📸</div>
-        <div class="uz-main"><strong>Click to upload</strong> pictures & videos</div>
-        <div class="uz-sub" style="margin-top:4px">Images and videos from your gallery</div>
-      </div>
-      <div class="divider"></div>
-      <div class="sec-label">Your Files</div>
-      <div class="files-grid" id="pf-grid"></div>
-      <div class="empty" id="pf-empty">
-        <div class="empty-ico">🖼️</div>
-        <p>No files yet.<br>Upload your first picture or video!</p>
-      </div>
+    <div id="pf-content" style="display:none;">
+        <div class="upload-zone" onclick="document.getElementById('up-personal').click()">
+            <input type="file" id="up-personal" hidden onchange="uploadFile('personal', this)"/>
+            Click to Upload Photo/Video
+        </div>
+        <div class="files-grid" id="grid-personal"></div>
     </div>
-  </div>
 </div>
 
-<!-- ════════════════ WISH ME ════════════════ -->
 <div class="page" id="pg-wish">
-  <div class="inner-head">
-    <button class="back-btn" onclick="gotoPage('dashboard')">← Back</button>
-    <div class="page-title">🌟 &nbsp;WISH ME</div>
-  </div>
-  <div class="inner-body">
-    <div class="wish-form-box">
-      <h3>✨ Leave a Wish for Marshall</h3>
-      <input class="wish-input" type="text" id="w-name" placeholder="Your Name (required)" maxlength="50"/>
-      <textarea class="wish-area" id="w-text" placeholder="Write your wish or message here..." maxlength="500"></textarea>
-      <button class="btn btn-gold" onclick="submitWish()">Send Wish 💫</button>
-    </div>
-    <div class="sec-label">All Wishes</div>
-    <div id="wish-list"></div>
-    <div class="empty" id="wish-empty">
-      <div class="empty-ico">🌠</div>
-      <p>No wishes yet.<br>Be the first to send one!</p>
-    </div>
-  </div>
+    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
+    <input class="field-input" id="w-name" placeholder="Your Name"/>
+    <textarea class="field-input" id="w-msg" placeholder="Your Wish" style="height:100px;"></textarea>
+    <button class="btn" onclick="sendWish()">Send Wish</button>
+    <div id="wish-list" style="margin-top:30px;"></div>
 </div>
 
-<!-- ════════════════ STORE FILE ════════════════ -->
 <div class="page" id="pg-store">
-  <div class="inner-head">
-    <button class="back-btn" onclick="gotoPage('dashboard')">← Back</button>
-    <div class="page-title">📁 &nbsp;STORE FILE</div>
-  </div>
-  <div class="inner-body">
-    <!-- Anyone can upload -->
-    <div class="sec-label">Upload Files</div>
-    <div class="upload-zone" id="sf-zone">
-      <input type="file" id="sf-file" multiple accept="image/*,video/*"/>
-      <div class="uz-icon">📤</div>
-      <div class="uz-main"><strong>Click to upload</strong> pictures & videos</div>
-      <div class="uz-sub" style="margin-top:4px">Your files will be stored and accessible only by Marshall</div>
-    </div>
-    <div class="divider"></div>
-    <!-- Admin gate -->
+    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
     <div id="sf-gate">
-      <div class="pass-gate" style="background:transparent;border:1px dashed var(--border2);margin-top:0">
-        <div class="gate-icon" style="font-size:2.2rem">🛡️</div>
-        <h3>Admin Access</h3>
-        <p>Only Marshall can view the files stored here. Enter the admin password to continue.</p>
-        <label class="field-label">Admin Password</label>
-        <input class="field-input" type="password" id="sf-pw" placeholder="Enter admin password" style="margin-bottom:16px"/>
-        <button class="btn btn-primary" onclick="unlockSF()">View Stored Files</button>
-        <div class="err-msg" id="sf-err">❌ Incorrect password</div>
-      </div>
+        <input class="field-input" type="password" id="sf-pw" placeholder="Admin Password"/>
+        <button class="btn" onclick="unlockFolder('store')">Unlock</button>
     </div>
-    <div id="sf-content" style="display:none">
-      <div class="sec-label">Stored Files</div>
-      <div class="files-grid" id="sf-grid"></div>
-      <div class="empty" id="sf-empty">
-        <div class="empty-ico">📂</div>
-        <p>No files stored yet.</p>
-      </div>
+    <div id="sf-content" style="display:none;">
+        <div class="upload-zone" onclick="document.getElementById('up-store').click()">
+            <input type="file" id="up-store" hidden onchange="uploadFile('store', this)"/>
+            Upload to Store
+        </div>
+        <div class="files-grid" id="grid-store"></div>
     </div>
-  </div>
 </div>
 
-<!-- ════════════════ MUSIC ════════════════ -->
 <div class="page" id="pg-music">
-  <div class="inner-head">
-    <button class="back-btn" onclick="gotoPage('dashboard')">← Back</button>
-    <div class="page-title">🎵 &nbsp;MUSIC</div>
-  </div>
-  <div class="inner-body">
-    <div class="sec-label">Upload Music or Recordings</div>
-    <div class="upload-zone" id="mu-zone">
-      <input type="file" id="mu-file" multiple accept="audio/*"/>
-      <div class="uz-icon">🎙️</div>
-      <div class="uz-main"><strong>Click to upload</strong> music or audio recordings</div>
-      <div class="uz-sub" style="margin-top:4px">MP3, WAV, OGG, M4A and more supported</div>
+    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
+    <div class="upload-zone" onclick="document.getElementById('up-music').click()">
+        <input type="file" id="up-music" hidden accept="audio/*" onchange="uploadFile('music', this)"/>
+        Upload Audio
     </div>
-    <div class="divider"></div>
-    <div class="sec-label">Your Tracks</div>
-    <div id="mu-list"></div>
-    <div class="empty" id="mu-empty">
-      <div class="empty-ico">🎶</div>
-      <p>No music yet.<br>Upload your first track or recording!</p>
-    </div>
-  </div>
+    <div id="grid-music"></div>
 </div>
 
-<!-- ════════════════ QUOTE OF THE DAY ════════════════ -->
-<div class="page" id="pg-quote">
-  <div class="inner-head">
-    <button class="back-btn" onclick="gotoPage('dashboard')">← Back</button>
-    <div class="page-title">💬 &nbsp;QUOTE OF THE DAY</div>
-  </div>
-  <div class="inner-body">
-    <div class="quote-stage">
-      <div class="q-number" id="q-num"></div>
-      <span class="q-mark">"</span>
-      <div class="q-text" id="q-text"></div>
-      <div class="q-author" id="q-author"></div>
-    </div>
-    <div class="quote-actions">
-      <button class="btn btn-ghost" onclick="prevQuote()">← Previous</button>
-      <button class="btn btn-primary" onclick="nextQuote()">Next Quote ✨</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════ SCRIPTS ════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ─── 55 QUOTES ─── */
-const QUOTES=[
-  {t:"The only way to do great work is to love what you do.",a:"Steve Jobs"},
-  {t:"In the middle of every difficulty lies opportunity.",a:"Albert Einstein"},
-  {t:"It does not matter how slowly you go as long as you do not stop.",a:"Confucius"},
-  {t:"Life is what happens when you're busy making other plans.",a:"John Lennon"},
-  {t:"The future belongs to those who believe in the beauty of their dreams.",a:"Eleanor Roosevelt"},
-  {t:"Success is not final, failure is not fatal: it is the courage to continue that counts.",a:"Winston Churchill"},
-  {t:"You miss 100% of the shots you don't take.",a:"Wayne Gretzky"},
-  {t:"Whether you think you can or you think you can't, you're right.",a:"Henry Ford"},
-  {t:"The best time to plant a tree was 20 years ago. The second best time is now.",a:"Chinese Proverb"},
-  {t:"Spread love everywhere you go. Let no one ever come to you without leaving happier.",a:"Mother Teresa"},
-  {t:"When you reach the end of your rope, tie a knot in it and hang on.",a:"Franklin D. Roosevelt"},
-  {t:"You only live once, but if you do it right, once is enough.",a:"Mae West"},
-  {t:"In three words I can sum up everything about life: it goes on.",a:"Robert Frost"},
-  {t:"If you want to live a happy life, tie it to a goal, not to people or things.",a:"Albert Einstein"},
-  {t:"Never let the fear of striking out keep you from playing the game.",a:"Babe Ruth"},
-  {t:"Your time is limited, so don't waste it living someone else's life.",a:"Steve Jobs"},
-  {t:"It is never too late to be what you might have been.",a:"George Eliot"},
-  {t:"You can't use up creativity. The more you use, the more you have.",a:"Maya Angelou"},
-  {t:"I have not failed. I've just found 10,000 ways that won't work.",a:"Thomas Edison"},
-  {t:"It is during our darkest moments that we must focus to see the light.",a:"Aristotle"},
-  {t:"Whoever is happy will make others happy too.",a:"Anne Frank"},
-  {t:"Do not go where the path may lead; go instead where there is no path and leave a trail.",a:"Ralph Waldo Emerson"},
-  {t:"You will face many defeats in life, but never let yourself be defeated.",a:"Maya Angelou"},
-  {t:"The greatest glory in living lies not in never falling, but in rising every time we fall.",a:"Nelson Mandela"},
-  {t:"In the end, it's not the years in your life that count. It's the life in your years.",a:"Abraham Lincoln"},
-  {t:"Life is short, and it's up to you to make it sweet.",a:"Sarah Louise Delany"},
-  {t:"You are never too old to set another goal or to dream a new dream.",a:"C.S. Lewis"},
-  {t:"Too many of us are not living our dreams because we are living our fears.",a:"Les Brown"},
-  {t:"I find that the harder I work, the more luck I seem to have.",a:"Thomas Jefferson"},
-  {t:"You have brains in your head. You have feet in your shoes. You can steer yourself any direction you choose.",a:"Dr. Seuss"},
-  {t:"If you look at what you have in life, you'll always have more.",a:"Oprah Winfrey"},
-  {t:"If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success.",a:"James Cameron"},
-  {t:"If you want to lift yourself up, lift up someone else.",a:"Booker T. Washington"},
-  {t:"A person who never made a mistake never tried anything new.",a:"Albert Einstein"},
-  {t:"The only impossible journey is the one you never begin.",a:"Tony Robbins"},
-  {t:"It is not the mountain we conquer, but ourselves.",a:"Edmund Hillary"},
-  {t:"One way to keep momentum going is to have constantly greater goals.",a:"Michael Korda"},
-  {t:"You don't have to be great to start, but you have to start to be great.",a:"Zig Ziglar"},
-  {t:"Act as if what you do makes a difference. It does.",a:"William James"},
-  {t:"Success usually comes to those who are too busy to be looking for it.",a:"Henry David Thoreau"},
-  {t:"Opportunities don't happen. You create them.",a:"Chris Grosser"},
-  {t:"Happiness is not something ready-made. It comes from your own actions.",a:"Dalai Lama"},
-  {t:"The secret of getting ahead is getting started.",a:"Mark Twain"},
-  {t:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
-  {t:"Everything you've ever wanted is on the other side of fear.",a:"George Addair"},
-  {t:"We can easily forgive a child who is afraid of the dark; the real tragedy is when men are afraid of the light.",a:"Plato"},
-  {t:"Darkness cannot drive out darkness; only light can do that. Hate cannot drive out hate; only love can do that.",a:"Martin Luther King Jr."},
-  {t:"Start where you are. Use what you have. Do what you can.",a:"Arthur Ashe"},
-  {t:"When something is important enough, you do it even if the odds are not in your favor.",a:"Elon Musk"},
-  {t:"The question isn't who is going to let me; it's who is going to stop me.",a:"Ayn Rand"},
-  {t:"Build your own dreams, or someone else will hire you to build theirs.",a:"Farrah Gray"},
-  {t:"The battles that count aren't the ones for gold medals. The struggles within yourself — the invisible, inevitable battles inside all of us — that's where it's at.",a:"Jesse Owens"},
-  {t:"Education costs money. But then so does ignorance.",a:"Sir Claus Moser"},
-  {t:"It's not what you look at that matters, it's what you see.",a:"Henry David Thoreau"},
-  {t:"Every strike brings me closer to the next home run.",a:"Babe Ruth"},
-];
+const S_URL = 'https://tvjztcrrpyunwmkuaisi.supabase.co';
+const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2anp0Y3JycHl1bndta3VhaXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTM2MjIsImV4cCI6MjA5MzE4OTYyMn0.Df8stpBfdXG68CBxrY0NV1IjschcX3m_cF480qF3p0Y';
+const _sb = supabase.createClient(S_URL, S_KEY);
 
-/* ─── INDEXEDDB ─── */
-let DB;
-function openDB(){
-  return new Promise((ok,fail)=>{
-    const r=indexedDB.open('xuniverseDB',1);
-    r.onupgradeneeded=e=>{
-      const d=e.target.result;
-      ['personal','storeFiles','music'].forEach(s=>{
-        if(!d.objectStoreNames.contains(s))
-          d.createObjectStore(s,{keyPath:'id',autoIncrement:true});
-      });
-    };
-    r.onsuccess=e=>{DB=e.target.result;ok(DB)};
-    r.onerror=()=>fail(r.error);
-  });
-}
-const dbAdd=(s,v)=>new Promise((ok,no)=>{const t=DB.transaction(s,'readwrite');const r=t.objectStore(s).add(v);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
-const dbAll=(s)=>new Promise((ok,no)=>{const t=DB.transaction(s,'readonly');const r=t.objectStore(s).getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
-const dbDel=(s,id)=>new Promise((ok,no)=>{const t=DB.transaction(s,'readwrite');const r=t.objectStore(s).delete(id);r.onsuccess=()=>ok();r.onerror=()=>no(r.error)});
-const readF=f=>new Promise(ok=>{const fr=new FileReader();fr.onload=e=>ok(e.target.result);fr.readAsDataURL(f)});
-
-/* ─── ROUTING ─── */
 function gotoPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
-  if(id==='pg-wish')renderWishes();
-  if(id==='pg-music')renderMusic();
-  if(id==='pg-quote')initQuote();
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id==='pg-wish') fetchWishes();
+    if(id==='pg-music') fetchFiles('music', 'grid-music');
 }
 
-/* ─── LOGIN ─── */
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    const pg=document.querySelector('.page.active').id;
-    if(pg==='login')doLogin();
-    else if(pg==='pg-personal'&&document.getElementById('pf-content').style.display==='none')unlockPF();
-    else if(pg==='pg-store'&&document.getElementById('sf-content').style.display==='none')unlockSF();
-  }
-});
 function doLogin(){
-  const id=document.getElementById('li-id').value.trim();
-  const pw=document.getElementById('li-pw').value;
-  const e=document.getElementById('li-err');
-  if(id==='Marshall'&&pw==='123456798'){
-    e.style.display='none';
-    gotoPage('dashboard');
-  } else {
-    e.style.display='block';
-    document.getElementById('li-pw').value='';
-  }
-}
-function doLogout(){
-  document.getElementById('li-id').value='';
-  document.getElementById('li-pw').value='';
-  // reset gates
-  document.getElementById('pf-gate').style.display='block';
-  document.getElementById('pf-content').style.display='none';
-  document.getElementById('pf-pw').value='';
-  document.getElementById('sf-gate').style.display='block';
-  document.getElementById('sf-content').style.display='none';
-  document.getElementById('sf-pw').value='';
-  gotoPage('login');
+    if(document.getElementById('li-id').value==='Marshall' && document.getElementById('li-pw').value==='123456798') gotoPage('dashboard');
+    else document.getElementById('li-err').style.display='block';
 }
 
-/* ─── PERSONAL FOLDER ─── */
-function unlockPF(){
-  const pw=document.getElementById('pf-pw').value;
-  const e=document.getElementById('pf-err');
-  if(pw==='865122'){
-    e.style.display='none';
-    document.getElementById('pf-gate').style.display='none';
-    document.getElementById('pf-content').style.display='block';
-    loadFiles('personal','pf-grid','pf-empty');
-  } else {
-    e.style.display='block';
-    document.getElementById('pf-pw').value='';
-  }
+function unlockFolder(type){
+    const pw = type === 'personal' ? '865122' : 'Ankit@99052';
+    const input = document.getElementById(type==='personal'?'pf-pw':'sf-pw').value;
+    if(input === pw){
+        document.getElementById(type==='personal'?'pf-gate':'sf-gate').style.display='none';
+        document.getElementById(type==='personal'?'pf-content':'sf-content').style.display='block';
+        fetchFiles(type, type==='personal'?'grid-personal':'grid-store');
+    }
 }
 
-/* ─── STORE FILE ─── */
-function unlockSF(){
-  const pw=document.getElementById('sf-pw').value;
-  const e=document.getElementById('sf-err');
-  if(pw==='Ankit@99052'){
-    e.style.display='none';
-    document.getElementById('sf-gate').style.display='none';
-    document.getElementById('sf-content').style.display='block';
-    loadFiles('storeFiles','sf-grid','sf-empty');
-  } else {
-    e.style.display='block';
-    document.getElementById('sf-pw').value='';
-  }
+async function uploadFile(bucket, input){
+    const file = input.files[0];
+    if(!file) return;
+    showToast("Uploading...");
+    const fname = `${Date.now()}_${file.name}`;
+    const {error} = await _sb.storage.from(bucket).upload(fname, file);
+    if(error) { alert("Upload Failed: Check Policies"); console.log(error); }
+    else { showToast("Success!"); fetchFiles(bucket, bucket==='personal'?'grid-personal':bucket==='store'?'grid-store':'grid-music'); }
 }
 
-/* ─── FILE UPLOAD HANDLER ─── */
-async function handleUpload(store,inputEl,gridId,emptyId,isMusic){
-  const files=Array.from(inputEl.files);
-  if(!files.length)return;
-  showToast('Uploading…');
-  for(const f of files){
-    const data=await readF(f);
-    await dbAdd(store,{name:f.name,type:f.type,data,date:new Date().toLocaleString()});
-  }
-  inputEl.value='';
-  if(isMusic) renderMusic();
-  else loadFiles(store,gridId,emptyId);
-  showToast('✓ Uploaded successfully!');
+async function fetchFiles(bucket, gridId){
+    const {data} = await _sb.storage.from(bucket).list();
+    const grid = document.getElementById(gridId);
+    grid.innerHTML = '';
+    data.forEach(f => {
+        const {data:{publicUrl}} = _sb.storage.from(bucket).getPublicUrl(f.name);
+        const div = document.createElement('div');
+        if(bucket === 'music'){
+            div.innerHTML = `<p>${f.name}</p><audio controls src="${publicUrl}"></audio><hr style="margin:10px 0;opacity:0.1">`;
+        } else {
+            div.className = 'f-item';
+            div.innerHTML = f.name.match(/\.(mp4|webm|mov)$/i) ? `<video src="${publicUrl}" controls></video>` : `<img src="${publicUrl}"/>`;
+        }
+        grid.appendChild(div);
+    });
 }
 
-/* ─── SETUP UPLOAD ZONES ─── */
-function setupZone(zoneId,inputId,store,gridId,emptyId,isMusic){
-  const zone=document.getElementById(zoneId);
-  const input=document.getElementById(inputId);
-  zone.addEventListener('click',()=>input.click());
-  input.addEventListener('change',()=>handleUpload(store,input,gridId,emptyId,isMusic));
+async function sendWish(){
+    const name = document.getElementById('w-name').value;
+    const text = document.getElementById('w-msg').value;
+    await _sb.from('Wishes').insert([{name, text}]);
+    showToast("Wish Sent!");
+    fetchWishes();
 }
 
-/* ─── RENDER FILES ─── */
-async function loadFiles(store,gridId,emptyId){
-  const items=await dbAll(store);
-  const grid=document.getElementById(gridId);
-  const empty=document.getElementById(emptyId);
-  grid.innerHTML='';
-  if(!items.length){empty.style.display='block';return}
-  empty.style.display='none';
-  items.forEach(item=>{
-    const d=document.createElement('div');
-    d.className='f-item';
-    let media='';
-    if(item.type.startsWith('image/'))
-      media=`<img src="${item.data}" alt="${item.name}" loading="lazy"/>`;
-    else if(item.type.startsWith('video/'))
-      media=`<video src="${item.data}" controls></video>`;
-    d.innerHTML=`${media}
-      <div class="f-meta">
-        <div class="f-name">${item.name}</div>
-        <div class="f-date">${item.date}</div>
-      </div>
-      <button class="f-del" title="Delete" onclick="delFile('${store}',${item.id},'${gridId}','${emptyId}')">✕</button>`;
-    grid.appendChild(d);
-  });
-}
-async function delFile(store,id,gridId,emptyId){
-  if(!confirm('Delete this file?'))return;
-  await dbDel(store,id);
-  loadFiles(store,gridId,emptyId);
+async function fetchWishes(){
+    const {data} = await _sb.from('Wishes').select('*').order('id', {ascending:false});
+    const list = document.getElementById('wish-list');
+    list.innerHTML = '';
+    data.forEach(w => {
+        const div = document.createElement('div');
+        div.className = 'wish-card';
+        div.innerHTML = `<strong>${w.name}</strong><p>${w.text}</p>`;
+        list.appendChild(div);
+    });
 }
 
-/* ─── WISHES ─── */
-function renderWishes(){
-  const all=JSON.parse(localStorage.getItem('xu_wishes')||'[]');
-  const list=document.getElementById('wish-list');
-  const empty=document.getElementById('wish-empty');
-  list.innerHTML='';
-  if(!all.length){empty.style.display='block';return}
-  empty.style.display='none';
-  [...all].reverse().forEach(w=>{
-    const d=document.createElement('div');
-    d.className='wish-card';
-    d.innerHTML=`<div class="wish-who">✦ ${escHtml(w.name)}</div>
-      <div class="wish-body">${escHtml(w.text)}</div>
-      <div class="wish-when">${w.date}</div>`;
-    list.appendChild(d);
-  });
-}
-function submitWish(){
-  const name=document.getElementById('w-name').value.trim();
-  const text=document.getElementById('w-text').value.trim();
-  if(!name){alert('Please enter your name.');return}
-  if(!text){alert('Please write your wish.');return}
-  const all=JSON.parse(localStorage.getItem('xu_wishes')||'[]');
-  all.push({name,text,date:new Date().toLocaleString()});
-  localStorage.setItem('xu_wishes',JSON.stringify(all));
-  document.getElementById('w-name').value='';
-  document.getElementById('w-text').value='';
-  renderWishes();
-  showToast('💫 Wish sent!');
-}
-function escHtml(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-/* ─── MUSIC ─── */
-async function renderMusic(){
-  const tracks=await dbAll('music');
-  const list=document.getElementById('mu-list');
-  const empty=document.getElementById('mu-empty');
-  list.innerHTML='';
-  if(!tracks.length){empty.style.display='block';return}
-  empty.style.display='none';
-  tracks.forEach(t=>{
-    const d=document.createElement('div');
-    d.className='track-row';
-    d.innerHTML=`<div class="track-top">
-      <div class="track-icon-wrap">🎵</div>
-      <div class="track-info">
-        <div class="track-name">${escHtml(t.name)}</div>
-        <div class="track-date">${t.date}</div>
-      </div>
-      <button class="track-del" title="Remove" onclick="delTrack(${t.id})">🗑️</button>
-    </div>
-    <audio controls src="${t.data}"></audio>`;
-    list.appendChild(d);
-  });
-}
-async function delTrack(id){
-  if(!confirm('Remove this track?'))return;
-  await dbDel('music',id);
-  renderMusic();
-}
-
-/* ─── QUOTE ─── */
-let qIdx=0;
-function initQuote(){
-  const d=new Date();
-  const day=Math.floor((d-(new Date(d.getFullYear(),0,0)))/864e5);
-  qIdx=day%QUOTES.length;
-  renderQuote();
-}
-function renderQuote(){
-  const q=QUOTES[qIdx];
-  document.getElementById('q-text').textContent=q.t;
-  document.getElementById('q-author').textContent='— '+q.a;
-  document.getElementById('q-num').textContent=`Quote ${qIdx+1} of ${QUOTES.length}`;
-}
-function nextQuote(){qIdx=(qIdx+1)%QUOTES.length;renderQuote()}
-function prevQuote(){qIdx=(qIdx-1+QUOTES.length)%QUOTES.length;renderQuote()}
-
-/* ─── TOAST ─── */
-let _tt;
-function showToast(msg,isErr){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast'+(isErr?' err':'');
-  t.style.display='block';
-  clearTimeout(_tt);
-  _tt=setTimeout(()=>t.style.display='none',3000);
-}
-
-/* ─── INIT ─── */
-openDB().then(()=>{
-  setupZone('pf-zone','pf-file','personal','pf-grid','pf-empty',false);
-  setupZone('sf-zone','sf-file','storeFiles','sf-grid','sf-empty',false);
-  setupZone('mu-zone','mu-file','music',null,null,true);
-}).catch(e=>console.error('DB init failed:',e));
+function showToast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
 </script>
 </body>
 </html>
