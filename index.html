@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>XUNIVERSE — Secure Vault</title>
+    <title>XUNIVERSE — Private Vault</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Syne:wght@400;700&display=swap" rel="stylesheet"/>
     <style>
         :root{--bg:#05070a;--card:#0d1117;--accent:#3d7fff;--text:#e6edf3;--muted:#8b949e;--border:#30363d;--green:#238636;}
@@ -46,15 +46,11 @@
     </div>
 </div>
 
-<div class="page" id="pg-wish"><div class="card"><h3>Send a Wish</h3><br><input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Your Message"></textarea>
-    <button class="btn" onclick="sendData('Wishes', {Name:v('w-name'), Text:v('w-msg')})">SEND WISH</button>
-    <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-wish"><div class="card"><h3>Send a Wish</h3><br><input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Your Message"></textarea><button class="btn" onclick="sendData('Wishes', {Name:document.getElementById('w-name').value, Text:document.getElementById('w-msg').value})">SEND WISH</button><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 
 <div class="page" id="pg-store"><div class="card"><h3>Upload to Store</h3><br><input type="file" onchange="uploadFile('store', this)"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 
-<div class="page" id="pg-contact"><div class="card"><h3>Save Contact</h3><br><input id="c-name" placeholder="Contact Name"/><input id="c-num" placeholder="Phone Number"/>
-    <button class="btn" onclick="sendData('Contacts', {Name:v('c-name'), Number:v('c-num')})">SAVE CONTACT</button>
-    <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-contact"><div class="card"><h3>Save Contact</h3><br><input id="c-name" placeholder="Contact Name"/><input id="c-num" placeholder="Phone Number"/><button class="btn" onclick="sendData('Contacts', {Name:document.getElementById('c-name').value, Number:document.getElementById('c-num').value})">SAVE CONTACT</button><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 
 <div class="page" id="pg-music"><div class="card"><h3>Upload Music</h3><br><input type="file" accept="audio/*" onchange="uploadFile('music', this)"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 
@@ -72,19 +68,42 @@
 const S_URL = 'https://tvjztcrrpyunwmkuaisi.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2anp0Y3JycHl1bndta3VhaXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTM2MjIsImV4cCI6MjA5MzE4OTYyMn0.Df8stpBfdXG68CBxrY0NV1IjschcX3m_cF480qF3p0Y';
 const _sb = supabase.createClient(S_URL, S_KEY);
-const v = (id) => document.getElementById(id).value;
 
-function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function handleLogin(){ if(v('user-id')==='Marshall' && v('user-pw')==='123456798'){ document.getElementById('admin-card').style.display='block'; } document.getElementById('logoutBtn').style.display='block'; showPage('pg-dash'); }
-function openVault(){ if(prompt("Enter Vault Security Key:") === 'Ankit@9905296'){ showPage('pg-vault'); loadVault(); } else { alert("WRONG KEY"); } }
+function showPage(id){ 
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
+    document.getElementById(id).classList.add('active'); 
+    window.scrollTo(0,0);
+}
+
+function handleLogin(){ 
+    const uid = document.getElementById('user-id').value; 
+    const upw = document.getElementById('user-pw').value;
+    if(uid === 'Marshall' && upw === '123456798'){ 
+        document.getElementById('admin-card').style.display='block'; 
+        document.getElementById('logoutBtn').style.display='block';
+        showPage('pg-dash'); 
+    } else {
+        alert("Access Denied: Check Credentials");
+    }
+}
+
+function openVault(){ 
+    const pass = prompt("Enter Vault Security Key:");
+    if(pass === 'Ankit@9905296'){ 
+        showPage('pg-vault'); 
+        loadVault(); 
+    } else { 
+        alert("WRONG SECURITY KEY"); 
+    } 
+}
 
 async function sendData(t, o){ 
     const {error} = await _sb.from(t).insert([o]); 
-    if(error) { 
-        alert("ERROR: " + error.message); 
+    if(error) {
+        alert("Error: " + error.message);
     } else { 
-        toast("Sent!"); 
-        clearInputs(); 
+        toast("Sent Successfully!"); 
+        document.querySelectorAll('input, textarea').forEach(i=>i.value=''); 
     } 
 }
 
@@ -93,14 +112,14 @@ async function uploadFile(b, i){
     toast("Uploading..."); 
     const p = `${Date.now()}_${f.name}`; 
     const {error} = await _sb.storage.from(b).upload(p, f); 
-    if(error) alert("Upload Failed: " + error.message); else toast("Received!"); 
+    if(error) alert("Upload Failed: " + error.message); else toast("File Received!"); 
 }
 
 async function loadVault(){
     const {data:w} = await _sb.from('Wishes').select('*');
-    document.getElementById('v-wishes').innerHTML = w ? w.map(x=>`<div class="vault-item"><b>${x.Name || 'Anonymous'}:</b> ${x.Text || '(No Message)'}</div>`).join('') : 'Empty';
+    document.getElementById('v-wishes').innerHTML = w ? w.map(x=>`<div class="vault-item"><b>${x.Name}:</b> ${x.Text}</div>`).join('') : 'Empty';
     const {data:c} = await _sb.from('Contacts').select('*');
-    document.getElementById('v-contacts').innerHTML = c ? c.map(x=>`<div class="vault-item"><b>${x.Name || 'No Name'}:</b> ${x.Number || 'No Number'}</div>`).join('') : 'Empty';
+    document.getElementById('v-contacts').innerHTML = c ? c.map(x=>`<div class="vault-item"><b>${x.Name}:</b> ${x.Number}</div>`).join('') : 'Empty';
     const {data:f} = await _sb.storage.from('store').list();
     const grid = document.getElementById('v-files'); grid.innerHTML = '';
     if(f) f.forEach(file => { 
@@ -108,8 +127,13 @@ async function loadVault(){
         grid.innerHTML += `<div class="vault-item"><img src="${publicUrl}" class="f-img"><p>${file.name}</p></div>`; 
     });
 }
-function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
-function clearInputs(){ document.querySelectorAll('input, textarea').forEach(i=>i.value=''); }
+
+function toast(m){ 
+    const t=document.getElementById('toast'); 
+    t.innerText=m; 
+    t.style.display='block'; 
+    setTimeout(()=>t.style.display='none',3000); 
+}
 </script>
 </body>
 </html>
