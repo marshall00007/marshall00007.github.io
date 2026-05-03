@@ -81,8 +81,7 @@ function openVault(){ if(prompt("Enter Vault Security Key:") === 'Ankit@9905296'
 async function sendData(t, o){ 
     const {error} = await _sb.from(t).insert([o]); 
     if(error) { 
-        console.error(error); 
-        alert("Sync Error: Ensure Table name is '" + t + "' and Columns match exactly."); 
+        alert("ERROR: " + error.message); 
     } else { 
         toast("Sent!"); 
         clearInputs(); 
@@ -94,16 +93,14 @@ async function uploadFile(b, i){
     toast("Uploading..."); 
     const p = `${Date.now()}_${f.name}`; 
     const {error} = await _sb.storage.from(b).upload(p, f); 
-    if(error) alert("Upload Failed"); else toast("Received!"); 
+    if(error) alert("Upload Failed: " + error.message); else toast("Received!"); 
 }
 
 async function loadVault(){
     const {data:w} = await _sb.from('Wishes').select('*');
     document.getElementById('v-wishes').innerHTML = w ? w.map(x=>`<div class="vault-item"><b>${x.Name || 'Anonymous'}:</b> ${x.Text || '(No Message)'}</div>`).join('') : 'Empty';
-    
     const {data:c} = await _sb.from('Contacts').select('*');
     document.getElementById('v-contacts').innerHTML = c ? c.map(x=>`<div class="vault-item"><b>${x.Name || 'No Name'}:</b> ${x.Number || 'No Number'}</div>`).join('') : 'Empty';
-    
     const {data:f} = await _sb.storage.from('store').list();
     const grid = document.getElementById('v-files'); grid.innerHTML = '';
     if(f) f.forEach(file => { 
