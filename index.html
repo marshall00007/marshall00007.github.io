@@ -17,7 +17,7 @@
             letter-spacing: 8px;
             color: var(--accent);
             text-shadow: 0 0 20px rgba(61, 127, 255, 0.6);
-            margin-bottom: 30px;
+            margin: 40px 0;
             text-align: center;
             animation: pulse 2s infinite alternate;
         }
@@ -45,13 +45,14 @@
         .btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:1rem;}
         
         #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green);padding:12px 24px;border-radius:8px;display:none;z-index:1000;font-weight:bold;}
-        .vault-item{background:#161b22;border:1px solid var(--border);padding:15px;border-radius:8px;margin-bottom:10px;text-align:left;}
+        .vault-item{background:#161b22;border:1px solid var(--border);padding:15px;border-radius:8px;margin-bottom:10px;text-align:left;word-break:break-all;}
+        .f-img{width:100%;max-height:200px;object-fit:cover;border-radius:6px;margin-bottom:10px;}
     </style>
 </head>
 <body>
 
 <div class="topbar"><div class="logo-small">XUNIVERSE</div><button id="logoutBtn" style="display:none;background:none;border:1px solid var(--border);color:#8b949e;padding:5px 10px;border-radius:4px;" onclick="location.reload()">Logout</button></div>
-<div id="toast">Success!</div>
+<div id="toast">Action Successful!</div>
 
 <div class="page active" id="pg-login">
     <div class="logo-main">XUNIVERSE</div>
@@ -70,21 +71,23 @@
         <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3><p>Send your number</p></div>
         <div class="card" onclick="showPage('pg-music')"><h3>🎵 Music</h3><p>Upload Audio</p></div>
         <div id="admin-card" class="card" style="display:none;border:2px solid var(--accent);" onclick="openVault()">
-            <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3><p>Private Access</p>
+            <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3><p>Protected Access</p>
         </div>
     </div>
 </div>
 
 <div class="page" id="pg-wish"><div class="card" style="max-width:450px;"><h3>Send a Wish</h3><br><input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Your Message"></textarea><button class="btn" onclick="sendWish()">SEND WISH</button><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
-<div class="page" id="pg-store"><div class="card" style="max-width:450px;"><h3>Upload to Store</h3><br><input type="file" id="f-store" onchange="up('store', 'f-store')"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-store"><div class="card" style="max-width:450px;"><h3>Upload to Store</h3><br><input type="file" id="up-store" onchange="handleUp('store', 'up-store')"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 <div class="page" id="pg-contact"><div class="card" style="max-width:450px;"><h3>Save Contact</h3><br><input id="c-name" placeholder="Contact Name"/><input id="c-num" placeholder="Phone Number"/><button class="btn" onclick="sendContact()">SAVE CONTACT</button><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
-<div class="page" id="pg-music"><div class="card" style="max-width:450px;"><h3>Upload Music</h3><br><input type="file" id="f-music" accept="audio/*" onchange="up('music', 'f-music')"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-music"><div class="card" style="max-width:450px;"><h3>Upload Music</h3><br><input type="file" id="up-music" accept="audio/*" onchange="handleUp('music', 'up-music')"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 
 <div class="page" id="pg-vault">
     <button class="btn" style="max-width:150px;margin-bottom:20px;background:#30363d" onclick="showPage('pg-dash')">← BACK</button>
     <div class="vertical-menu" style="max-width:800px;">
         <div><h3 style="margin-bottom:10px;">📥 Wishes</h3><div id="v-wishes"></div></div>
         <div><h3 style="margin-bottom:10px;">📞 Contacts</h3><div id="v-contacts"></div></div>
+        <div><h3 style="margin-bottom:10px;">🖼️ Store Files</h3><div id="v-store" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div></div>
+        <div><h3 style="margin-bottom:10px;">🎵 Music Files</h3><div id="v-music"></div></div>
     </div>
 </div>
 
@@ -94,10 +97,7 @@ const S_URL = 'https://tvjztcrrpyunwmkuaisi.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2anp0Y3JycHl1bndta3VhaXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTM2MjIsImV4cCI6MjA5MzE4OTYyMn0.Df8stpBfdXG68CBxrY0NV1IjschcX3m_cF480qF3p0Y';
 const _sb = supabase.createClient(S_URL, S_KEY);
 
-function showPage(id){ 
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
-    document.getElementById(id).classList.add('active'); 
-}
+function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
 function handleLogin(){ 
     if(document.getElementById('user-id').value==='Marshall' && document.getElementById('user-pw').value==='123456798'){ 
@@ -107,33 +107,46 @@ function handleLogin(){
     } else { alert("Access Denied"); } 
 }
 
-function openVault(){ 
-    if(prompt("Security Key:")==='Ankit@9905296'){ showPage('pg-vault'); loadV(); } 
-}
+function openVault(){ if(prompt("Security Key:")==='Ankit@9905296'){ showPage('pg-vault'); loadVault(); } }
 
 async function sendWish(){
     const {error} = await _sb.from('Wishes').insert([{ Name: document.getElementById('w-name').value, Text: document.getElementById('w-msg').value }]);
-    if(error) alert(error.message); else { toast("Wish Sent!"); document.getElementById('w-name').value=''; document.getElementById('w-msg').value=''; }
+    if(error) alert(error.message); else { toast("Wish Received!"); document.getElementById('w-name').value=''; document.getElementById('w-msg').value=''; }
 }
 
 async function sendContact(){
     const {error} = await _sb.from('Contacts').insert([{ Name: document.getElementById('c-name').value, Number: document.getElementById('c-num').value }]);
-    if(error) alert(error.message); else { toast("Saved!"); document.getElementById('c-name').value=''; document.getElementById('c-num').value=''; }
+    if(error) alert(error.message); else { toast("Contact Saved!"); document.getElementById('c-name').value=''; document.getElementById('c-num').value=''; }
 }
 
-async function up(bucket, id){
-    const file = document.getElementById(id).files[0];
-    if(!file) return;
+async function handleUp(b, i){
+    const f = document.getElementById(i).files[0]; if(!f) return;
     toast("Uploading...");
-    const {error} = await _sb.storage.from(bucket).upload(`${Date.now()}_${file.name}`, file);
+    const {error} = await _sb.storage.from(b).upload(`${Date.now()}_${f.name}`, f);
     if(error) alert(error.message); else toast("Upload Successful!");
 }
 
-async function loadV(){
+async function loadVault(){
     const {data:w} = await _sb.from('Wishes').select('*');
     document.getElementById('v-wishes').innerHTML = w ? w.map(x=>`<div class="vault-item"><b>${x.Name}:</b> ${x.Text}</div>`).join('') : '';
     const {data:c} = await _sb.from('Contacts').select('*');
     document.getElementById('v-contacts').innerHTML = c ? c.map(x=>`<div class="vault-item"><b>${x.Name}:</b> ${x.Number}</div>`).join('') : '';
+    
+    // Load Store
+    const {data:sf} = await _sb.storage.from('store').list();
+    const sg = document.getElementById('v-store'); sg.innerHTML = '';
+    if(sf) sf.forEach(file => { 
+        const {data:{publicUrl}} = _sb.storage.from('store').getPublicUrl(file.name); 
+        sg.innerHTML += `<div class="vault-item"><img src="${publicUrl}" class="f-img"><p style="font-size:10px;">${file.name}</p></div>`; 
+    });
+
+    // Load Music
+    const {data:mf} = await _sb.storage.from('music').list();
+    const mg = document.getElementById('v-music'); mg.innerHTML = '';
+    if(mf) mf.forEach(file => { 
+        const {data:{publicUrl}} = _sb.storage.from('music').getPublicUrl(file.name); 
+        mg.innerHTML += `<div class="vault-item"><audio controls style="width:100%"><source src="${publicUrl}"></audio><p style="font-size:10px;">${file.name}</p></div>`; 
+    });
 }
 
 function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
