@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>XUNIVERSE — Private Vault</title>
+    <title>XUNIVERSE — Secure Vault</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Syne:wght@400;700&display=swap" rel="stylesheet"/>
     <style>
         :root{--bg:#05070a;--card:#0d1117;--accent:#3d7fff;--text:#e6edf3;--muted:#8b949e;--border:#30363d;--green:#238636;}
@@ -12,12 +12,12 @@
         .page.active{display:flex}
         .topbar{position:fixed;top:0;width:100%;height:60px;background:rgba(5,7,10,0.8);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);z-index:100;}
         .logo{font-family:'Orbitron',sans-serif;letter-spacing:3px;color:var(--accent);font-weight:900;}
-        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;width:100%;max-width:500px;margin-bottom:20px;}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;width:100%;max-width:500px;margin-bottom:20px;cursor:pointer;transition:0.3s;}
+        .card:hover{border-color:var(--accent);}
         input, textarea{width:100%;padding:12px;background:#161b22;border:1px solid var(--border);border-radius:6px;color:#fff;margin-bottom:15px;font-family:inherit;}
-        .btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:0.2s;}
-        .btn:hover{filter:brightness(1.2);}
+        .btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer;}
         .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;width:100%;max-width:1000px;}
-        .vault-item{background:var(--card);border:1px solid var(--border);padding:15px;border-radius:8px;}
+        .vault-item{background:var(--card);border:1px solid var(--border);padding:15px;border-radius:8px;margin-bottom:10px;text-align:left;}
         .f-img{width:100%;height:150px;object-fit:cover;border-radius:4px;}
         #toast{position:fixed;bottom:20px;background:var(--green);padding:10px 20px;border-radius:4px;display:none;z-index:1000;}
     </style>
@@ -46,8 +46,8 @@
         <div class="card" onclick="showPage('pg-store')"><h3>📁 Store</h3><p>Upload Files/Videos</p></div>
         <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3><p>Send your number</p></div>
         <div class="card" onclick="showPage('pg-music')"><h3>🎵 Music</h3><p>Upload Audio</p></div>
-        <div id="admin-card" class="card" style="display:none;border-color:var(--accent);" onclick="showPage('pg-vault')">
-            <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3><p>View all data</p>
+        <div id="admin-card" class="card" style="display:none;border-color:var(--accent);" onclick="openVault()">
+            <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3><p>Protected Access</p>
         </div>
     </div>
 </div>
@@ -65,7 +65,6 @@
 <div class="page" id="pg-store">
     <div class="card">
         <h3>Upload to Store</h3><br>
-        <p style="color:var(--muted);margin-bottom:15px;">Photos & Videos uploaded here go directly to Marshall.</p>
         <input type="file" id="f-store" accept="image/*,video/*" onchange="uploadFile('store', this)"/>
         <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
@@ -90,14 +89,15 @@
 </div>
 
 <div class="page" id="pg-vault">
-    <button class="btn" style="max-width:150px;margin-bottom:20px;" onclick="showPage('pg-dash')">← BACK</button>
-    <h2 style="margin-bottom:20px;">Owner's Secret Vault</h2>
+    <button class="btn" style="max-width:150px;margin-bottom:20px;background:#30363d" onclick="showPage('pg-dash')">← BACK</button>
+    <h2 style="margin-bottom:20px;">Secret Vault Content</h2>
     
-    <div class="card" style="max-width:800px;">
-        <h3>📥 Recent Wishes</h3><div id="v-wishes"></div><br>
-        <h3>📞 Saved Contacts</h3><div id="v-contacts"></div><br>
-        <h3>🖼️ Store Files</h3><div id="v-files" class="grid"></div>
+    <div class="grid" style="max-width:1200px;">
+        <div class="vault-block"><h3>📥 Wishes</h3><div id="v-wishes"></div></div>
+        <div class="vault-block"><h3>📞 Contacts</h3><div id="v-contacts"></div></div>
     </div>
+    <h3 style="margin:20px 0;">🖼️ Store Files</h3>
+    <div id="v-files" class="grid"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -106,29 +106,35 @@ const S_URL = 'https://tvjztcrrpyunwmkuaisi.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2anp0Y3JycHl1bndta3VhaXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTM2MjIsImV4cCI6MjA5MzE4OTYyMn0.Df8stpBfdXG68CBxrY0NV1IjschcX3m_cF480qF3p0Y';
 const _sb = supabase.createClient(S_URL, S_KEY);
 
-let isOwner = false;
 const v = (id) => document.getElementById(id).value;
 
 function showPage(id){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id==='pg-vault') loadVault();
 }
 
 function handleLogin(){
     const id = v('user-id'), pw = v('user-pw');
     if(id==='Marshall' && pw==='123456798'){
-        isOwner = true;
         document.getElementById('admin-card').style.display='block';
     }
     document.getElementById('logoutBtn').style.display='block';
     showPage('pg-dash');
 }
 
+function openVault(){
+    const access = prompt("Enter Vault Security Key:");
+    if(access === 'Ankit@9905296'){
+        showPage('pg-vault');
+        loadVault();
+    } else {
+        alert("ACCESS DENIED");
+    }
+}
+
 async function sendData(table, obj){
     const {error} = await _sb.from(table).insert([obj]);
-    if(error) alert("Error: Make sure table exists in Supabase");
-    else { toast("Sent Successfully!"); clearInputs(); }
+    if(error) alert("Sync Error"); else { toast("Successfully Sent!"); clearInputs(); }
 }
 
 async function uploadFile(bucket, input){
@@ -140,15 +146,12 @@ async function uploadFile(bucket, input){
 }
 
 async function loadVault(){
-    // Load Wishes
     const {data:w} = await _sb.from('Wishes').select('*');
     document.getElementById('v-wishes').innerHTML = w.map(x=>`<div class="vault-item"><b>${x.name}:</b> ${x.text}</div>`).join('');
     
-    // Load Contacts
     const {data:c} = await _sb.from('Contacts').select('*');
     document.getElementById('v-contacts').innerHTML = c.map(x=>`<div class="vault-item"><b>${x.name}:</b> ${x.number}</div>`).join('');
 
-    // Load Files
     const {data:f} = await _sb.storage.from('store').list();
     const grid = document.getElementById('v-files'); grid.innerHTML = '';
     f.forEach(file => {
