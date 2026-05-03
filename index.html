@@ -17,25 +17,19 @@
         input, textarea{width:100%;padding:12px;background:#161b22;border:1px solid var(--border);border-radius:6px;color:#fff;margin-bottom:15px;font-family:inherit;}
         .btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer;}
         .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;width:100%;max-width:1000px;}
-        .vault-item{background:var(--card);border:1px solid var(--border);padding:15px;border-radius:8px;margin-bottom:10px;text-align:left;}
+        .vault-item{background:#161b22;border:1px solid var(--border);padding:15px;border-radius:8px;margin-bottom:10px;text-align:left;}
         .f-img{width:100%;height:150px;object-fit:cover;border-radius:4px;}
-        #toast{position:fixed;bottom:20px;background:var(--green);padding:10px 20px;border-radius:4px;display:none;z-index:1000;}
+        #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green);padding:10px 20px;border-radius:4px;display:none;z-index:1000;}
     </style>
 </head>
 <body>
 
-<div class="topbar">
-    <div class="logo">XUNIVERSE</div>
-    <button id="logoutBtn" style="display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:4px;" onclick="location.reload()">Logout</button>
-</div>
-
+<div class="topbar"><div class="logo">XUNIVERSE</div><button id="logoutBtn" style="display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:4px;" onclick="location.reload()">Logout</button></div>
 <div id="toast">Action Successful!</div>
 
 <div class="page active" id="pg-login">
-    <div class="card">
-        <h2 style="margin-bottom:20px;text-align:center;">Login</h2>
-        <input type="text" id="user-id" placeholder="User ID"/>
-        <input type="password" id="user-pw" placeholder="Password"/>
+    <div class="card"><h2 style="text-align:center;margin-bottom:20px;">Login</h2>
+        <input type="text" id="user-id" placeholder="User ID"/><input type="password" id="user-pw" placeholder="Password"/>
         <button class="btn" onclick="handleLogin()">ENTER UNIVERSE</button>
     </div>
 </div>
@@ -52,52 +46,18 @@
     </div>
 </div>
 
-<div class="page" id="pg-wish">
-    <div class="card">
-        <h3>Send a Wish</h3><br>
-        <input id="w-name" placeholder="Your Name"/>
-        <textarea id="w-msg" placeholder="Your Message" style="height:100px;"></textarea>
-        <button class="btn" onclick="sendData('Wishes', {name:v('w-name'), text:v('w-msg')})">SEND WISH</button>
-        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
-    </div>
-</div>
-
-<div class="page" id="pg-store">
-    <div class="card">
-        <h3>Upload to Store</h3><br>
-        <input type="file" id="f-store" accept="image/*,video/*" onchange="uploadFile('store', this)"/>
-        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
-    </div>
-</div>
-
-<div class="page" id="pg-contact">
-    <div class="card">
-        <h3>Save Contact</h3><br>
-        <input id="c-name" placeholder="Contact Name"/>
-        <input id="c-num" placeholder="Phone Number"/>
-        <button class="btn" onclick="sendData('Contacts', {name:v('c-name'), number:v('c-num')})">SAVE CONTACT</button>
-        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
-    </div>
-</div>
-
-<div class="page" id="pg-music">
-    <div class="card">
-        <h3>Upload Music</h3><br>
-        <input type="file" id="f-music" accept="audio/*" onchange="uploadFile('music', this)"/>
-        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
-    </div>
-</div>
+<div class="page" id="pg-wish"><div class="card"><h3>Send a Wish</h3><br><input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Your Message"></textarea><button class="btn" onclick="sendData('Wishes', {Name:v('w-name'), Text:v('w-msg')})">SEND WISH</button><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-store"><div class="card"><h3>Upload to Store</h3><br><input type="file" onchange="uploadFile('store', this)"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-contact"><div class="card"><h3>Save Contact</h3><br><input id="c-name" placeholder="Contact Name"/><input id="c-num" placeholder="Phone Number"/><button class="btn" onclick="sendData('Contacts', {Name:v('c-name'), Number:v('c-num')})">SAVE CONTACT</button><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<div class="page" id="pg-music"><div class="card"><h3>Upload Music</h3><br><input type="file" accept="audio/*" onchange="uploadFile('music', this)"/><button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button></div></div>
 
 <div class="page" id="pg-vault">
     <button class="btn" style="max-width:150px;margin-bottom:20px;background:#30363d" onclick="showPage('pg-dash')">← BACK</button>
-    <h2 style="margin-bottom:20px;">Secret Vault Content</h2>
-    
     <div class="grid" style="max-width:1200px;">
-        <div class="vault-block"><h3>📥 Wishes</h3><div id="v-wishes"></div></div>
-        <div class="vault-block"><h3>📞 Contacts</h3><div id="v-contacts"></div></div>
+        <div><h3>📥 Wishes</h3><div id="v-wishes"></div></div>
+        <div><h3>📞 Contacts</h3><div id="v-contacts"></div></div>
     </div>
-    <h3 style="margin:20px 0;">🖼️ Store Files</h3>
-    <div id="v-files" class="grid"></div>
+    <h3 style="margin-top:30px;">🖼️ Store Files</h3><div id="v-files" class="grid"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -105,61 +65,24 @@
 const S_URL = 'https://tvjztcrrpyunwmkuaisi.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2anp0Y3JycHl1bndta3VhaXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTM2MjIsImV4cCI6MjA5MzE4OTYyMn0.Df8stpBfdXG68CBxrY0NV1IjschcX3m_cF480qF3p0Y';
 const _sb = supabase.createClient(S_URL, S_KEY);
-
 const v = (id) => document.getElementById(id).value;
 
-function showPage(id){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
+function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function handleLogin(){ if(v('user-id')==='Marshall' && v('user-pw')==='123456798'){ document.getElementById('admin-card').style.display='block'; } document.getElementById('logoutBtn').style.display='block'; showPage('pg-dash'); }
+function openVault(){ if(prompt("Enter Vault Security Key:") === 'Ankit@9905296'){ showPage('pg-vault'); loadVault(); } else { alert("WRONG KEY"); } }
 
-function handleLogin(){
-    const id = v('user-id'), pw = v('user-pw');
-    if(id==='Marshall' && pw==='123456798'){
-        document.getElementById('admin-card').style.display='block';
-    }
-    document.getElementById('logoutBtn').style.display='block';
-    showPage('pg-dash');
-}
-
-function openVault(){
-    const access = prompt("Enter Vault Security Key:");
-    if(access === 'Ankit@9905296'){
-        showPage('pg-vault');
-        loadVault();
-    } else {
-        alert("ACCESS DENIED");
-    }
-}
-
-async function sendData(table, obj){
-    const {error} = await _sb.from(table).insert([obj]);
-    if(error) alert("Sync Error"); else { toast("Successfully Sent!"); clearInputs(); }
-}
-
-async function uploadFile(bucket, input){
-    const file = input.files[0]; if(!file) return;
-    toast("Uploading...");
-    const path = `${Date.now()}_${file.name}`;
-    const {error} = await _sb.storage.from(bucket).upload(path, file);
-    if(error) alert("Upload Failed"); else toast("File Received!");
-}
+async function sendData(t, o){ const {error} = await _sb.from(t).insert([o]); if(error) { console.log(error); alert("Sync Error: Check Table/Column Names"); } else { toast("Sent!"); clearInputs(); } }
+async function uploadFile(b, i){ const f = i.files[0]; if(!f) return; toast("Uploading..."); const p = `${Date.now()}_${f.name}`; const {error} = await _sb.storage.from(b).upload(p, f); if(error) alert("Upload Failed"); else toast("Received!"); }
 
 async function loadVault(){
     const {data:w} = await _sb.from('Wishes').select('*');
-    document.getElementById('v-wishes').innerHTML = w.map(x=>`<div class="vault-item"><b>${x.name}:</b> ${x.text}</div>`).join('');
-    
+    document.getElementById('v-wishes').innerHTML = w ? w.map(x=>`<div class="vault-item"><b>${x.Name || 'No Name'}:</b> ${x.Text || 'No Text'}</div>`).join('') : 'Empty';
     const {data:c} = await _sb.from('Contacts').select('*');
-    document.getElementById('v-contacts').innerHTML = c.map(x=>`<div class="vault-item"><b>${x.name}:</b> ${x.number}</div>`).join('');
-
+    document.getElementById('v-contacts').innerHTML = c ? c.map(x=>`<div class="vault-item"><b>${x.Name || 'No Name'}:</b> ${x.Number || 'No Number'}</div>`).join('') : 'Empty';
     const {data:f} = await _sb.storage.from('store').list();
     const grid = document.getElementById('v-files'); grid.innerHTML = '';
-    f.forEach(file => {
-        const {data:{publicUrl}} = _sb.storage.from('store').getPublicUrl(file.name);
-        grid.innerHTML += `<div class="vault-item"><img src="${publicUrl}" class="f-img"><p>${file.name}</p></div>`;
-    });
+    if(f) f.forEach(file => { const {data:{publicUrl}} = _sb.storage.from('store').getPublicUrl(file.name); grid.innerHTML += `<div class="vault-item"><img src="${publicUrl}" class="f-img"><p>${file.name}</p></div>`; });
 }
-
 function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
 function clearInputs(){ document.querySelectorAll('input, textarea').forEach(i=>i.value=''); }
 </script>
