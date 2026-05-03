@@ -1,104 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>XUNIVERSE — Marshall's Personal Universe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Syne:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>XUNIVERSE — Private Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Syne:wght@400;700&display=swap" rel="stylesheet"/>
     <style>
-        :root{--bg:#060810;--bg2:#0a0f1c;--bg3:#0f1628;--surface:#141e35;--surface2:#1a2540;--border:#1f2e4a;--border2:#263558;--accent:#3d7fff;--accent-glow:rgba(61,127,255,0.25);--gold:#f5c842;--text:#dde4f5;--muted:#6b7fa0;--red:#ff5a5a;--green:#36e8a0;}
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-        .starfield{position:fixed;inset:0;z-index:0;background-image:radial-gradient(1px 1px at 10% 10%,#fff,transparent);pointer-events:none;}
-        .page{display:none;min-height:100vh;position:relative;z-index:1;flex-direction:column;padding:20px;padding-top:80px;}
+        :root{--bg:#05070a;--card:#0d1117;--accent:#3d7fff;--text:#e6edf3;--muted:#8b949e;--border:#30363d;--green:#238636;}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+        .page{display:none;min-height:100vh;padding:20px;padding-top:80px;flex-direction:column;align-items:center;}
         .page.active{display:flex}
-        #login{align-items:center;justify-content:center;padding-top:0;}
-        .login-card{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center;}
-        .xlogo{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;letter-spacing:5px;margin-bottom:30px;color:var(--accent);}
-        .field-input{width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:#fff;margin-bottom:15px;outline:none;}
-        .btn{padding:12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;transition:0.3s;width:100%;background:var(--accent);color:#fff;}
-        .topbar{position:fixed;top:0;left:0;right:0;height:70px;background:rgba(6,8,16,0.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid var(--border);z-index:1000;}
-        .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;width:100%;max-width:1200px;margin:0 auto;}
-        .dash-card{background:var(--bg2);border:1px solid var(--border);padding:30px;border-radius:15px;text-align:center;cursor:pointer;transition:0.3s;}
-        .dash-card:hover{border-color:var(--accent);transform:translateY(-5px);}
-        .upload-zone{border:2px dashed var(--border2);border-radius:12px;padding:40px;text-align:center;background:var(--bg2);margin-bottom:20px;cursor:pointer;}
-        .files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;}
-        .f-item{background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border);}
-        .f-item img, .f-item video{width:100%;height:150px;object-fit:cover;}
-        .wish-card{background:var(--bg2);border:1px solid var(--border);padding:15px;border-radius:10px;margin-bottom:10px;}
-        .toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#000;padding:12px 24px;border-radius:8px;display:none;z-index:9999;}
+        .topbar{position:fixed;top:0;width:100%;height:60px;background:rgba(5,7,10,0.8);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);z-index:100;}
+        .logo{font-family:'Orbitron',sans-serif;letter-spacing:3px;color:var(--accent);font-weight:900;}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;width:100%;max-width:500px;margin-bottom:20px;}
+        input, textarea{width:100%;padding:12px;background:#161b22;border:1px solid var(--border);border-radius:6px;color:#fff;margin-bottom:15px;font-family:inherit;}
+        .btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:0.2s;}
+        .btn:hover{filter:brightness(1.2);}
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;width:100%;max-width:1000px;}
+        .vault-item{background:var(--card);border:1px solid var(--border);padding:15px;border-radius:8px;}
+        .f-img{width:100%;height:150px;object-fit:cover;border-radius:4px;}
+        #toast{position:fixed;bottom:20px;background:var(--green);padding:10px 20px;border-radius:4px;display:none;z-index:1000;}
     </style>
 </head>
 <body>
 
-<div class="starfield"></div>
-<div class="toast" id="toast"></div>
+<div class="topbar">
+    <div class="logo">XUNIVERSE</div>
+    <button id="logoutBtn" style="display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:4px;" onclick="location.reload()">Logout</button>
+</div>
 
-<div class="page active" id="login">
-    <div class="login-card">
-        <div class="xlogo">XUNIVERSE</div>
-        <input class="field-input" type="text" id="li-id" placeholder="User ID"/>
-        <input class="field-input" type="password" id="li-pw" placeholder="Password"/>
-        <button class="btn" onclick="doLogin()">✦ ENTER</button>
-        <p id="li-err" style="color:var(--red);margin-top:10px;display:none;">Wrong Credentials</p>
+<div id="toast">Action Successful!</div>
+
+<div class="page active" id="pg-login">
+    <div class="card">
+        <h2 style="margin-bottom:20px;text-align:center;">Login</h2>
+        <input type="text" id="user-id" placeholder="User ID"/>
+        <input type="password" id="user-pw" placeholder="Password"/>
+        <button class="btn" onclick="handleLogin()">ENTER UNIVERSE</button>
     </div>
 </div>
 
-<div class="page" id="dashboard">
-    <div class="topbar"><div class="xlogo" style="font-size:1rem;margin:0;">XUNIVERSE</div><button onclick="location.reload()" style="background:none;border:none;color:var(--muted);cursor:pointer;">Logout</button></div>
-    <div class="cards-grid">
-        <div class="dash-card" onclick="gotoPage('pg-personal')"><h3>🔒 Private</h3><p>Personal Folder</p></div>
-        <div class="dash-card" onclick="gotoPage('pg-wish')"><h3>🌟 Wish Me</h3><p>Leave a Message</p></div>
-        <div class="dash-card" onclick="gotoPage('pg-store')"><h3>📁 Store</h3><p>Public Files</p></div>
-        <div class="dash-card" onclick="gotoPage('pg-music')"><h3>🎵 Music</h3><p>Audio Tracks</p></div>
-    </div>
-</div>
-
-<div class="page" id="pg-personal">
-    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
-    <div id="pf-gate">
-        <input class="field-input" type="password" id="pf-pw" placeholder="Folder Password"/>
-        <button class="btn" onclick="unlockFolder('personal')">Unlock</button>
-    </div>
-    <div id="pf-content" style="display:none;">
-        <div class="upload-zone" onclick="document.getElementById('up-personal').click()">
-            <input type="file" id="up-personal" hidden onchange="uploadFile('personal', this)"/>
-            Click to Upload Photo/Video
+<div class="page" id="pg-dash">
+    <div class="grid">
+        <div class="card" onclick="showPage('pg-wish')"><h3>🌟 Wish Me</h3><p>Drop a message</p></div>
+        <div class="card" onclick="showPage('pg-store')"><h3>📁 Store</h3><p>Upload Files/Videos</p></div>
+        <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3><p>Send your number</p></div>
+        <div class="card" onclick="showPage('pg-music')"><h3>🎵 Music</h3><p>Upload Audio</p></div>
+        <div id="admin-card" class="card" style="display:none;border-color:var(--accent);" onclick="showPage('pg-vault')">
+            <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3><p>View all data</p>
         </div>
-        <div class="files-grid" id="grid-personal"></div>
     </div>
 </div>
 
 <div class="page" id="pg-wish">
-    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
-    <input class="field-input" id="w-name" placeholder="Your Name"/>
-    <textarea class="field-input" id="w-msg" placeholder="Your Wish" style="height:100px;"></textarea>
-    <button class="btn" onclick="sendWish()">Send Wish</button>
-    <div id="wish-list" style="margin-top:30px;"></div>
+    <div class="card">
+        <h3>Send a Wish</h3><br>
+        <input id="w-name" placeholder="Your Name"/>
+        <textarea id="w-msg" placeholder="Your Message" style="height:100px;"></textarea>
+        <button class="btn" onclick="sendData('Wishes', {name:v('w-name'), text:v('w-msg')})">SEND WISH</button>
+        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
+    </div>
 </div>
 
 <div class="page" id="pg-store">
-    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
-    <div id="sf-gate">
-        <input class="field-input" type="password" id="sf-pw" placeholder="Admin Password"/>
-        <button class="btn" onclick="unlockFolder('store')">Unlock</button>
+    <div class="card">
+        <h3>Upload to Store</h3><br>
+        <p style="color:var(--muted);margin-bottom:15px;">Photos & Videos uploaded here go directly to Marshall.</p>
+        <input type="file" id="f-store" accept="image/*,video/*" onchange="uploadFile('store', this)"/>
+        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
-    <div id="sf-content" style="display:none;">
-        <div class="upload-zone" onclick="document.getElementById('up-store').click()">
-            <input type="file" id="up-store" hidden onchange="uploadFile('store', this)"/>
-            Upload to Store
-        </div>
-        <div class="files-grid" id="grid-store"></div>
+</div>
+
+<div class="page" id="pg-contact">
+    <div class="card">
+        <h3>Save Contact</h3><br>
+        <input id="c-name" placeholder="Contact Name"/>
+        <input id="c-num" placeholder="Phone Number"/>
+        <button class="btn" onclick="sendData('Contacts', {name:v('c-name'), number:v('c-num')})">SAVE CONTACT</button>
+        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
 </div>
 
 <div class="page" id="pg-music">
-    <button class="btn" style="width:100px;margin-bottom:20px;" onclick="gotoPage('dashboard')">← Back</button>
-    <div class="upload-zone" onclick="document.getElementById('up-music').click()">
-        <input type="file" id="up-music" hidden accept="audio/*" onchange="uploadFile('music', this)"/>
-        Upload Audio
+    <div class="card">
+        <h3>Upload Music</h3><br>
+        <input type="file" id="f-music" accept="audio/*" onchange="uploadFile('music', this)"/>
+        <button class="btn" style="background:#30363d;margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
-    <div id="grid-music"></div>
+</div>
+
+<div class="page" id="pg-vault">
+    <button class="btn" style="max-width:150px;margin-bottom:20px;" onclick="showPage('pg-dash')">← BACK</button>
+    <h2 style="margin-bottom:20px;">Owner's Secret Vault</h2>
+    
+    <div class="card" style="max-width:800px;">
+        <h3>📥 Recent Wishes</h3><div id="v-wishes"></div><br>
+        <h3>📞 Saved Contacts</h3><div id="v-contacts"></div><br>
+        <h3>🖼️ Store Files</h3><div id="v-files" class="grid"></div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -107,76 +106,59 @@ const S_URL = 'https://tvjztcrrpyunwmkuaisi.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2anp0Y3JycHl1bndta3VhaXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTM2MjIsImV4cCI6MjA5MzE4OTYyMn0.Df8stpBfdXG68CBxrY0NV1IjschcX3m_cF480qF3p0Y';
 const _sb = supabase.createClient(S_URL, S_KEY);
 
-function gotoPage(id){
+let isOwner = false;
+const v = (id) => document.getElementById(id).value;
+
+function showPage(id){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id==='pg-wish') fetchWishes();
-    if(id==='pg-music') fetchFiles('music', 'grid-music');
+    if(id==='pg-vault') loadVault();
 }
 
-function doLogin(){
-    if(document.getElementById('li-id').value==='Marshall' && document.getElementById('li-pw').value==='123456798') gotoPage('dashboard');
-    else document.getElementById('li-err').style.display='block';
-}
-
-function unlockFolder(type){
-    const pw = type === 'personal' ? '865122' : 'Ankit@99052';
-    const input = document.getElementById(type==='personal'?'pf-pw':'sf-pw').value;
-    if(input === pw){
-        document.getElementById(type==='personal'?'pf-gate':'sf-gate').style.display='none';
-        document.getElementById(type==='personal'?'pf-content':'sf-content').style.display='block';
-        fetchFiles(type, type==='personal'?'grid-personal':'grid-store');
+function handleLogin(){
+    const id = v('user-id'), pw = v('user-pw');
+    if(id==='Marshall' && pw==='123456798'){
+        isOwner = true;
+        document.getElementById('admin-card').style.display='block';
     }
+    document.getElementById('logoutBtn').style.display='block';
+    showPage('pg-dash');
+}
+
+async function sendData(table, obj){
+    const {error} = await _sb.from(table).insert([obj]);
+    if(error) alert("Error: Make sure table exists in Supabase");
+    else { toast("Sent Successfully!"); clearInputs(); }
 }
 
 async function uploadFile(bucket, input){
-    const file = input.files[0];
-    if(!file) return;
-    showToast("Uploading...");
-    const fname = `${Date.now()}_${file.name}`;
-    const {error} = await _sb.storage.from(bucket).upload(fname, file);
-    if(error) { alert("Upload Failed: Check Policies"); console.log(error); }
-    else { showToast("Success!"); fetchFiles(bucket, bucket==='personal'?'grid-personal':bucket==='store'?'grid-store':'grid-music'); }
+    const file = input.files[0]; if(!file) return;
+    toast("Uploading...");
+    const path = `${Date.now()}_${file.name}`;
+    const {error} = await _sb.storage.from(bucket).upload(path, file);
+    if(error) alert("Upload Failed"); else toast("File Received!");
 }
 
-async function fetchFiles(bucket, gridId){
-    const {data} = await _sb.storage.from(bucket).list();
-    const grid = document.getElementById(gridId);
-    grid.innerHTML = '';
-    data.forEach(f => {
-        const {data:{publicUrl}} = _sb.storage.from(bucket).getPublicUrl(f.name);
-        const div = document.createElement('div');
-        if(bucket === 'music'){
-            div.innerHTML = `<p>${f.name}</p><audio controls src="${publicUrl}"></audio><hr style="margin:10px 0;opacity:0.1">`;
-        } else {
-            div.className = 'f-item';
-            div.innerHTML = f.name.match(/\.(mp4|webm|mov)$/i) ? `<video src="${publicUrl}" controls></video>` : `<img src="${publicUrl}"/>`;
-        }
-        grid.appendChild(div);
+async function loadVault(){
+    // Load Wishes
+    const {data:w} = await _sb.from('Wishes').select('*');
+    document.getElementById('v-wishes').innerHTML = w.map(x=>`<div class="vault-item"><b>${x.name}:</b> ${x.text}</div>`).join('');
+    
+    // Load Contacts
+    const {data:c} = await _sb.from('Contacts').select('*');
+    document.getElementById('v-contacts').innerHTML = c.map(x=>`<div class="vault-item"><b>${x.name}:</b> ${x.number}</div>`).join('');
+
+    // Load Files
+    const {data:f} = await _sb.storage.from('store').list();
+    const grid = document.getElementById('v-files'); grid.innerHTML = '';
+    f.forEach(file => {
+        const {data:{publicUrl}} = _sb.storage.from('store').getPublicUrl(file.name);
+        grid.innerHTML += `<div class="vault-item"><img src="${publicUrl}" class="f-img"><p>${file.name}</p></div>`;
     });
 }
 
-async function sendWish(){
-    const name = document.getElementById('w-name').value;
-    const text = document.getElementById('w-msg').value;
-    await _sb.from('Wishes').insert([{name, text}]);
-    showToast("Wish Sent!");
-    fetchWishes();
-}
-
-async function fetchWishes(){
-    const {data} = await _sb.from('Wishes').select('*').order('id', {ascending:false});
-    const list = document.getElementById('wish-list');
-    list.innerHTML = '';
-    data.forEach(w => {
-        const div = document.createElement('div');
-        div.className = 'wish-card';
-        div.innerHTML = `<strong>${w.name}</strong><p>${w.text}</p>`;
-        list.appendChild(div);
-    });
-}
-
-function showToast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
+function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
+function clearInputs(){ document.querySelectorAll('input, textarea').forEach(i=>i.value=''); }
 </script>
 </body>
 </html>
