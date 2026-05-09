@@ -1,5 +1,5 @@
 // --- CONFIG ---
-const GEMINI_API_KEY = "AIzaSyBlHArqwsBu3A_qX1RatlTRlbiEcb4ZZ8c"; 
+const GEMINI_API_KEY = "AIzaSyCL4IL-0G6BNazsZHdpj6fhkhaqGhAXikg"; 
 const S_URL = 'https://tvjztcrpyunwmkuaisi.supabase.co';
 const S_KEY = 'sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6';
 const _sb = supabase.createClient(S_URL, S_KEY);
