@@ -9,168 +9,104 @@
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
         
-        /* Centered Google-Style Logo */
-        .logo-main {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--accent);
-            text-shadow: 0 0 20px rgba(61, 127, 255, 0.4);
-            margin: 60px 0 20px 0;
-            text-align: center;
-        }
+        .logo-main { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; color: var(--accent); text-align: center; margin: 40px 0; text-shadow: 0 0 20px rgba(61, 127, 255, 0.4); }
 
-        .page{display:none;min-height:100vh;padding:20px;padding-top:80px;flex-direction:column;align-items:center;}
+        .page{display:none; min-height:100vh; padding:20px; padding-top:80px; flex-direction:column; align-items:center;}
         .page.active{display:flex}
         
-        .topbar{position:fixed;top:0;width:100%;height:60px;background:rgba(5,7,10,0.8);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);z-index:100;}
-        .logo-small{font-family:'Orbitron',sans-serif;color:var(--accent);font-weight:900;letter-spacing:2px;}
+        /* Fixed Top Bar */
+        .topbar{position:fixed; top:0; width:100%; height:60px; background:rgba(5,7,10,0.8); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid var(--border); z-index:100;}
+        .logo-small{font-family:'Orbitron',sans-serif; color:var(--accent); font-weight:900; letter-spacing:2px;}
 
-        /* Search Bar & Chat UI */
-        .search-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 10px 20px;
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-        }
-        .search-card:focus-within { border-color: var(--accent); box-shadow: 0 0 15px rgba(61, 127, 255, 0.2); }
+        /* Vertical Menu Container */
+        .vertical-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; }
+
+        /* Search Section Style */
+        .search-section { background: var(--card); border: 1px solid var(--accent); border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        #chat-box { max-height: 150px; overflow-y: auto; margin-bottom: 10px; font-size: 0.9rem; text-align: left; color: #ccc; }
+        .search-input-group { display: flex; gap: 10px; }
         
-        #chat-box { 
-            width: 100%; 
-            max-width: 600px; 
-            max-height: 300px; 
-            overflow-y: auto; 
-            margin-bottom: 20px; 
-            text-align: left;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
+        /* Inputs & Buttons */
+        input, textarea { width: 100%; padding: 12px; background: #161b22; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: inherit; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         
-        input { flex: 1; background: transparent; border: none; color: #fff; padding: 10px; outline: none; font-size: 1rem; }
-        .btn-search { background: none; border: none; color: var(--accent); font-weight: bold; cursor: pointer; padding: 0 10px; }
-
-        /* Dashboard Buttons */
-        .vertical-menu { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin-top: 40px; }
-        .card-btn { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .card-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
-
-        .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--green); padding: 12px 24px; border-radius: 8px; display: none; z-index: 1000; font-weight: bold; }
+        #toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--green); padding:12px 24px; border-radius:8px; display:none; z-index:1000;}
+        .vault-item { background: #161b22; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="topbar">
     <div class="logo-small">XUNIVERSE</div>
-    <button id="logoutBtn" style="display:none;background:none;border:1px solid var(--border);color:#8b949e;padding:5px 10px;border-radius:4px;" onclick="location.reload()">Logout</button>
+    <button id="logoutBtn" style="display:none; background:none; border:1px solid var(--border); color:#8b949e; padding:5px 10px; border-radius:4px;" onclick="location.reload()">Logout</button>
 </div>
 
 <div id="toast">Success</div>
 
-<!-- 1. THE AI SEARCH INTERFACE -->
-<div class="page active" id="pg-ai">
+<!-- PAGE 1: LOGIN -->
+<div class="page active" id="pg-login">
     <div class="logo-main">XUNIVERSE</div>
-    
-    <div id="chat-box"></div>
-
-    <div class="search-card">
-        <input type="text" id="userInput" placeholder="Search the universe or ask to draw..." onkeydown="if(event.key==='Enter') sendMessage()"/>
-        <button class="btn-search" onclick="sendMessage()">SEARCH</button>
-    </div>
-
-    <div class="vertical-menu">
-        <div class="card-btn" onclick="showPage('pg-login')"><h3>🛡️ OWNER TERMINAL</h3><p>Access Private Files</p></div>
+    <div class="card" style="max-width:400px; cursor:default;">
+        <h2 style="margin-bottom:20px;">Access Terminal</h2>
+        <input type="text" id="user-id" placeholder="User ID"/>
+        <input type="password" id="user-pw" placeholder="Password"/>
+        <button class="btn" onclick="handleLogin()">ENTER UNIVERSE</button>
     </div>
 </div>
 
-<!-- 2. OWNER LOGIN -->
-<div class="page" id="pg-login">
-    <div class="card-btn" style="max-width:400px; cursor:default;">
-        <h2>Security Check</h2><br>
-        <input type="text" id="user-id" placeholder="User ID" style="border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; width: 100%;"/>
-        <input type="password" id="user-pw" placeholder="Password" style="border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; width: 100%;"/>
-        <button class="btn-action" onclick="handleLogin()">ENTER VAULT</button>
-        <button class="btn-action" style="background:#30363d;" onclick="showPage('pg-ai')">BACK</button>
-    </div>
-</div>
-
-<!-- 3. PRIVATE DASHBOARD -->
+<!-- PAGE 2: DASHBOARD (SEARCH TOP, FILES BOTTOM) -->
 <div class="page" id="pg-dash">
-    <div class="vertical-menu">
-        <div class="card-btn" onclick="showPage('pg-store')"><h3>📁 File Store</h3></div>
-        <div class="card-btn" onclick="showPage('pg-wish')"><h3>🌟 Wishes</h3></div>
-        <div id="admin-card" class="card-btn" style="display:none; border: 2px solid var(--accent);" onclick="openVault()"><h3>🔓 OPEN VAULT</h3></div>
-        <button class="btn-action" style="background:#30363d;" onclick="showPage('pg-ai')">LOGOUT TO SEARCH</button>
+    <div class="vertical-container">
+        
+        <!-- SEARCH BAR AT THE TOP -->
+        <div class="search-section">
+            <h4 style="margin-bottom:10px; color:var(--accent);">AI VAULT SEARCH</h4>
+            <div id="chat-box"></div>
+            <div class="search-input-group">
+                <input type="text" id="userInput" placeholder="Ask Gemini..."/>
+                <button class="btn" style="width:80px;" onclick="sendMessage()">GO</button>
+            </div>
+        </div>
+
+        <!-- VERTICAL FILE/ACTION SECTION -->
+        <div class="card" onclick="showPage('pg-wish')"><h3>🌟 Wish Me</h3><p>Drop a message</p></div>
+        <div class="card" onclick="showPage('pg-store')"><h3>📁 Store</h3><p>Upload Files</p></div>
+        <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3></div>
+        <div id="admin-card" class="card" style="display:none; border:2px solid var(--accent);" onclick="openVault()">
+            <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3><p>View Saved Data</p>
+        </div>
     </div>
 </div>
 
-<!-- STORE & WISH PAGES (SIMPLIFIED) -->
-<div class="page" id="pg-wish"><div class="card-btn" style="max-width:450px;"><h3>Send Wish</h3><input id="w-name" placeholder="Name"/><textarea id="w-msg" placeholder="Message" style="width:100%; background:#161b22; color:#fff; border:1px solid var(--border); padding:10px; border-radius:8px;"></textarea><button class="btn-action" onclick="sendWish()">SEND</button><button class="btn-action" style="background:#30363d;" onclick="showPage('pg-dash')">BACK</button></div></div>
-<div class="page" id="pg-store"><div class="card-btn" style="max-width:450px;"><h3>Upload File</h3><input type="file" id="up-store" onchange="handleUp('store', 'up-store')"/><button class="btn-action" style="background:#30363d;" onclick="showPage('pg-dash')">BACK</button></div></div>
+<!-- OTHER PAGES -->
+<div class="page" id="pg-wish">
+    <div class="card" style="max-width:450px;">
+        <h3>Send Wish</h3><br>
+        <input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Message"></textarea>
+        <button class="btn" onclick="sendWish()">SEND</button>
+        <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
+    </div>
+</div>
 
+<div class="page" id="pg-store">
+    <div class="card" style="max-width:450px;">
+        <h3>Upload File</h3><br>
+        <input type="file" id="up-store" onchange="handleUp('store', 'up-store')"/>
+        <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
+    </div>
+</div>
+
+<div class="page" id="pg-vault">
+    <button class="btn" style="max-width:120px; margin-bottom:20px; background:#30363d" onclick="showPage('pg-dash')">BACK</button>
+    <div id="v-wishes"></div>
+    <div id="v-store"></div>
+</div>
+
+<!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// --- CONFIGURATION ---
-const GEMINI_API_KEY = "AIzaSyCJtsMyRi7RfwuSzQObT4oJsKdT4vjo3zQ";
-const S_URL = 'https://tvjztcrpyunwmkuaisi.supabase.co';
-const S_KEY = 'sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6';
-const _sb = supabase.createClient(S_URL, S_KEY);
+<script src="script.js"></script>
 
-function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-
-// --- AI SEARCH LOGIC ---
-async function sendMessage() {
-    const input = document.getElementById('userInput');
-    const msg = input.value;
-    if(!msg) return;
-
-    const box = document.getElementById('chat-box');
-    box.innerHTML += `<p style="color:var(--accent)"><b>You:</b> ${msg}</p>`;
-    input.value = "";
-
-    try {
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: msg }] }] })
-        });
-        const data = await resp.json();
-        const reply = data.candidates[0].content.parts[0].text;
-        
-        box.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
-        box.scrollTop = box.scrollHeight;
-    } catch(e) {
-        box.innerHTML += `<p style="color:red">Error: Ensure your API Key is active.</p>`;
-    }
-}
-
-// --- VAULT LOGIC ---
-function handleLogin(){ 
-    if(document.getElementById('user-id').value==='Marshall' && document.getElementById('user-pw').value==='123456798'){ 
-        document.getElementById('admin-card').style.display='block'; 
-        showPage('pg-dash'); 
-    } else { alert("Denied"); } 
-}
-
-async function sendWish(){
-    await _sb.from('Wishes').insert([{ Name: document.getElementById('w-name').value, Text: document.getElementById('w-msg').value }]);
-    toast("Wish Received!");
-}
-
-async function handleUp(b, i){
-    const f = document.getElementById(i).files[0];
-    if(!f) return;
-    toast("Uploading...");
-    const {error} = await _sb.storage.from(b).upload(`${Date.now()}_${f.name}`, f);
-    if(error) alert(error.message); else toast("Upload Successful!");
-}
-
-function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
-</script>
 </body>
 </html>
