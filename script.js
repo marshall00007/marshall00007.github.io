@@ -15,7 +15,7 @@ function showPage(id){
 function handleLogin(){ 
     const id = document.getElementById('user-id').value;
     const pw = document.getElementById('user-pw').value;
-    // Matches your specific credentials
+    // Matches your credentials: Marshall / 123456798
     if(id === 'Marshall' && pw === '123456798'){ 
         document.getElementById('admin-card').style.display = 'block'; 
         document.getElementById('logoutBtn').style.display = 'block'; 
@@ -25,7 +25,7 @@ function handleLogin(){
     } 
 }
 
-// --- FIXED AI SEARCH LOGIC ---
+// --- FIXED AI SEARCH LOGIC (STABLE V1) ---
 async function sendMessage() {
     const input = document.getElementById('userInput');
     const msg = input.value;
@@ -36,8 +36,8 @@ async function sendMessage() {
     input.value = "";
 
     try {
-        // The URL below is the exact "handshake" Google requires
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        // CHANGED: Using /v1/ instead of /v1beta/ for better stability
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -50,15 +50,16 @@ async function sendMessage() {
         const data = await resp.json();
 
         if (data.error) {
-            // This will show you exactly what is wrong if it fails again
             box.innerHTML += `<p style="color:red;"><b>Error:</b> ${data.error.message}</p>`;
-        } else {
+        } else if (data.candidates && data.candidates[0].content) {
             const reply = data.candidates[0].content.parts[0].text;
             box.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
+        } else {
+            box.innerHTML += `<p style="color:red;"><b>Error:</b> Unexpected response format.</p>`;
         }
         box.scrollTop = box.scrollHeight;
     } catch(e) {
-        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Could not reach AI.</p>`;
+        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Could not reach AI. Please check your key.</p>`;
     }
 }
 
