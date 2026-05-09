@@ -1,5 +1,11 @@
-// --- CONFIG ---
+// ==========================================
+// 1. DELETE THE TEXT BELOW AND PASTE YOUR KEY
+// ==========================================
 const GEMINI_API_KEY = "AIzaSyCL4IL-0G6BNazsZHdpj6fhkhaqGhAXikg"; 
+
+// ==========================================
+// 2. DO NOT CHANGE ANYTHING BELOW THIS LINE
+// ==========================================
 const S_URL = 'https://tvjztcrpyunwmkuaisi.supabase.co';
 const S_KEY = 'sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6';
 const _sb = supabase.createClient(S_URL, S_KEY);
@@ -9,7 +15,6 @@ function showPage(id){
     document.getElementById(id).classList.add('active'); 
 }
 
-// --- LOGIN LOGIC ---
 function handleLogin(){ 
     if(document.getElementById('user-id').value==='Marshall' && document.getElementById('user-pw').value==='123456798'){ 
         document.getElementById('admin-card').style.display='block'; 
@@ -18,7 +23,6 @@ function handleLogin(){
     } else { alert("Access Denied"); } 
 }
 
-// --- AI SEARCH LOGIC ---
 async function sendMessage() {
     const input = document.getElementById('userInput');
     const msg = input.value;
@@ -32,21 +36,31 @@ async function sendMessage() {
         const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: msg }] }] })
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: msg }]
+                }]
+            })
         });
+
         const data = await resp.json();
-        const reply = data.candidates[0].content.parts[0].text;
-        
-        box.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
+
+        if (data.error) {
+            box.innerHTML += `<p style="color:red;"><b>Error:</b> ${data.error.message}</p>`;
+        } else {
+            const reply = data.candidates[0].content.parts[0].text;
+            box.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
+        }
         box.scrollTop = box.scrollHeight;
     } catch(e) {
-        box.innerHTML += `<p style="color:red;">Error: Key Inactive</p>`;
+        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Could not connect.</p>`;
     }
 }
 
-// --- VAULT ACTIONS ---
 async function sendWish(){
-    await _sb.from('Wishes').insert([{ Name: document.getElementById('w-name').value, Text: document.getElementById('w-msg').value }]);
+    const name = document.getElementById('w-name').value;
+    const text = document.getElementById('w-msg').value;
+    await _sb.from('Wishes').insert([{ Name: name, Text: text }]);
     toast("Wish Sent!");
 }
 
