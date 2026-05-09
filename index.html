@@ -50,7 +50,22 @@
     </style>
 </head>
 <body>
+<!-- Login Screen -->
+<div id="login-screen" style="text-align: center; padding: 20px;">
+    <h3>Welcome to XUNIVERSE</h3>
+    <input type="text" id="nameInput" placeholder="Enter your name..." style="padding: 10px;">
+    <button onclick="startChat()" style="padding: 10px;">Enter Vault</button>
+</div>
 
+<!-- Chat Screen (Hidden until login) -->
+<div id="chat-screen" style="display:none; padding: 20px;">
+    <div id="chat-box" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #f9f9f9; color: #333;"></div>
+    <input type="text" id="userInput" placeholder="Ask Gemini or ask to draw..." style="width: 80%; padding: 10px;">
+    <button onclick="sendMessage()" style="padding: 10px;">Send</button>
+</div>
+
+<!-- Link the Script -->
+<script src="script.js"></script>
 <div class="topbar"><div class="logo-small">XUNIVERSE</div><button id="logoutBtn" style="display:none;background:none;border:1px solid var(--border);color:#8b949e;padding:5px 10px;border-radius:4px;" onclick="location.reload()">Logout</button></div>
 <div id="toast">Action Successful!</div>
 
