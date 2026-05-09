@@ -1,7 +1,7 @@
 // ==========================================
 // 1. DELETE THE TEXT BELOW AND PASTE YOUR KEY
 // ==========================================
-const GEMINI_API_KEY = "AIzaSyCL4IL-0G6BNazsZHdpj6fhkhaqGhAXikg"; 
+const GEMINI_API_KEY = "AIzaSyAIPTWizXyjkmb9eSbe_YNX1dIasGsFFcY"; 
 
 // ==========================================
 // 2. DO NOT CHANGE ANYTHING BELOW THIS LINE
@@ -16,11 +16,15 @@ function showPage(id){
 }
 
 function handleLogin(){ 
-    if(document.getElementById('user-id').value==='Marshall' && document.getElementById('user-pw').value==='123456798'){ 
-        document.getElementById('admin-card').style.display='block'; 
-        document.getElementById('logoutBtn').style.display='block'; 
+    const id = document.getElementById('user-id').value;
+    const pw = document.getElementById('user-pw').value;
+    if(id === 'Marshall' && pw === '123456798'){ 
+        document.getElementById('admin-card').style.display = 'block'; 
+        document.getElementById('logoutBtn').style.display = 'block'; 
         showPage('pg-dash'); 
-    } else { alert("Access Denied"); } 
+    } else { 
+        alert("Access Denied"); 
+    } 
 }
 
 async function sendMessage() {
@@ -33,7 +37,8 @@ async function sendMessage() {
     input.value = "";
 
     try {
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        // Updated to gemini-1.5-flash-latest to ensure compatibility with v1beta
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -53,24 +58,35 @@ async function sendMessage() {
         }
         box.scrollTop = box.scrollHeight;
     } catch(e) {
-        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Could not connect.</p>`;
+        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key or Connection.</p>`;
     }
 }
 
 async function sendWish(){
     const name = document.getElementById('w-name').value;
     const text = document.getElementById('w-msg').value;
-    await _sb.from('Wishes').insert([{ Name: name, Text: text }]);
-    toast("Wish Sent!");
+    const { error } = await _sb.from('Wishes').insert([{ Name: name, Text: text }]);
+    if(error) alert(error.message); else toast("Wish Sent!");
 }
 
 async function handleUp(b, i){
     const f = document.getElementById(i).files[0];
     if(!f) return;
     toast("Uploading...");
-    await _sb.storage.from(b).upload(`${Date.now()}_${f.name}`, f);
-    toast("Done!");
+    const { error } = await _sb.storage.from(b).upload(`${Date.now()}_${f.name}`, f);
+    if(error) alert(error.message); else toast("Upload Successful!");
 }
 
-function openVault(){ if(prompt("Security Key:")==='Ankit@9905296'){ showPage('pg-vault'); } }
-function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
+function openVault(){ 
+    const key = prompt("Security Key:");
+    if(key === 'Ankit@9905296'){ 
+        showPage('pg-vault'); 
+    } 
+}
+
+function toast(m){ 
+    const t = document.getElementById('toast'); 
+    t.innerText = m; 
+    t.style.display = 'block'; 
+    setTimeout(() => t.style.display = 'none', 3000); 
+}
