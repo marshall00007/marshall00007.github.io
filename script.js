@@ -1,5 +1,5 @@
 // --- CONFIGURATION ---
-const GEMINI_API_KEY = "AIzaSyCJtsMyRi7RfwuSzQObT4oJsKdT4vjo3zQ";
+const GEMINI_API_KEY = "AIzaSyBlHArqwsBu3A_qX1RatlTRlbiEcb4ZZ8c";
 const SUPABASE_URL = "https://tvjztcrrpyunwmkuaisi.supabase.co"; 
 const SUPABASE_KEY = "sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6"; 
 
