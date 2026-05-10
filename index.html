@@ -16,12 +16,10 @@
         .topbar{position:fixed; top:0; width:100%; height:60px; background:rgba(5,7,10,0.8); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid var(--border); z-index:100;}
         .logo-small{font-family:'Orbitron',sans-serif; color:var(--accent); font-weight:900; letter-spacing:2px;}
 
-        /* Vertical Container */
         .vertical-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; margin: 0 auto; }
 
-        /* Search Section (Top) */
         .search-section { background: var(--card); border: 1px solid var(--accent); border-radius: 15px; padding: 15px; }
-        #chat-box { max-height: 150px; overflow-y: auto; margin-bottom: 10px; font-size: 0.9rem; text-align: left; color: #ccc; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        #chat-box { max-height: 200px; overflow-y: auto; margin-bottom: 10px; font-size: 0.9rem; text-align: left; color: #ccc; border-bottom: 1px solid var(--border); padding-bottom: 10px; scroll-behavior: smooth;}
         .search-input-group { display: flex; gap: 10px; }
         
         input, textarea { width: 100%; padding: 12px; background: #161b22; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: inherit; }
@@ -41,7 +39,6 @@
 
 <div id="toast">Success</div>
 
-<!-- LOGIN PAGE -->
 <div class="page active" id="pg-login">
     <div class="logo-main">XUNIVERSE</div>
     <div class="card" style="max-width:400px; cursor:default;">
@@ -52,11 +49,8 @@
     </div>
 </div>
 
-<!-- DASHBOARD (SEARCH TOP -> MENU BOTTOM) -->
 <div class="page" id="pg-dash">
     <div class="vertical-container">
-        
-        <!-- 1. AI SEARCH SECTION -->
         <div class="search-section">
             <h4 style="margin-bottom:10px; color:var(--accent);">AI VAULT SEARCH</h4>
             <div id="chat-box"></div>
@@ -66,29 +60,26 @@
             </div>
         </div>
 
-        <!-- 2. MENU BUTTONS -->
         <div class="card" onclick="showPage('pg-wish')"><h3>🌟 Wish Me</h3><p>Drop a message</p></div>
         <div class="card" onclick="showPage('pg-store')"><h3>📁 Store</h3><p>Upload Files</p></div>
         <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3></div>
         
-        <!-- 3. OWNER VAULT -->
         <div id="admin-card" class="card" style="display:none; border:2px solid var(--accent);" onclick="openVault()">
             <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3>
         </div>
     </div>
 </div>
 
-<!-- WISH PAGE -->
 <div class="page" id="pg-wish">
     <div class="card" style="max-width:450px;">
         <h3>Send Wish</h3><br>
-        <input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Message"></textarea>
+        <input id="w-name" placeholder="Your Name"/><br>
+        <textarea id="w-msg" placeholder="Message"></textarea><br>
         <button class="btn" onclick="sendWish()">SEND</button>
         <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
 </div>
 
-<!-- STORE PAGE -->
 <div class="page" id="pg-store">
     <div class="card" style="max-width:450px;">
         <h3>Upload File</h3><br>
@@ -97,7 +88,6 @@
     </div>
 </div>
 
-<!-- VAULT VIEW -->
 <div class="page" id="pg-vault">
     <button class="btn" style="max-width:120px; margin-bottom:20px; background:#30363d" onclick="showPage('pg-dash')">BACK</button>
     <div id="v-wishes"></div>
@@ -106,13 +96,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// --- CONFIG (ENTER KEY HERE) ---
 const GEMINI_API_KEY = "AIzaSyAIPTWizXyjkmb9eSbe_YNX1dIasGsFFcY"; 
 const S_URL = 'https://tvjztcrpyunwmkuaisi.supabase.co';
 const S_KEY = 'sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6';
 const _sb = supabase.createClient(S_URL, S_KEY);
 
-function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function showPage(id){ 
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
+    document.getElementById(id).classList.add('active'); 
+}
 
 function handleLogin(){ 
     if(document.getElementById('user-id').value==='Marshall' && document.getElementById('user-pw').value==='123456798'){ 
@@ -141,14 +133,17 @@ async function sendMessage() {
             box.innerHTML += `<p style="color:red;"><b>Error:</b> ${data.error.message}</p>`;
         } else {
             const reply = data.candidates[0].content.parts[0].text;
-            box.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
+            box.innerHTML += `<p><b>AI:</b> ${reply.replace(/\n/g, '<br>')}</p>`;
         }
         box.scrollTop = box.scrollHeight;
-    } catch(e) { box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key.</p>`; }
+    } catch(e) { box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key or Internet.</p>`; }
 }
 
 async function sendWish(){
-    await _sb.from('Wishes').insert([{ Name: document.getElementById('w-name').value, Text: document.getElementById('w-msg').value }]);
+    const name = document.getElementById('w-name').value;
+    const text = document.getElementById('w-msg').value;
+    if(!name || !text) return alert("Fill all fields");
+    await _sb.from('Wishes').insert([{ Name: name, Text: text }]);
     toast("Wish Sent!");
 }
 
