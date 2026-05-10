@@ -94,7 +94,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const GEMINI_API_KEY = "AIzaSyDkbnZTmqqZJpxz0biYK72vzRCFLB8ZIXk"; 
+const GEMINI_API_KEY = "AIzaSyAE1GlQQw4GByTnJTVBmtXQKXBhKcqtiY4";  
 const S_URL = 'https://tvjztcrpyunwmkuaisi.supabase.co';
 const S_KEY = 'sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6';
 const _sb = supabase.createClient(S_URL, S_KEY);
@@ -142,7 +142,7 @@ async function loadVaultData(){
     const { data: wishes } = await _sb.from('Wishes').select('*');
     const { data: contacts } = await _sb.from('Contacts').select('*');
     const { data: files } = await _sb.storage.from('store').list();
-    
+
     document.getElementById('v-wishes').innerHTML = "<h3>Wishes</h3>" + wishes.map(w => `<p>${w.Name}: ${w.Text}</p>`).join('');
     document.getElementById('v-contacts').innerHTML = "<h3>Contacts</h3>" + contacts.map(c => `<p>${c.Name}: ${c.Phone}</p>`).join('');
     document.getElementById('v-store').innerHTML = "<h3>Files</h3>" + files.map(f => `<p>${f.name}</p>`).join('');
