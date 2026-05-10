@@ -8,32 +8,25 @@
         :root{--bg:#05070a;--card:#0d1117;--accent:#3d7fff;--text:#e6edf3;--border:#30363d;--green:#238636;}
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
-        
-        .logo-main { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; color: var(--accent); text-align: center; margin: 40px 0; text-shadow: 0 0 20px rgba(61, 127, 255, 0.4); }
+        .logo-main { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; color: var(--accent); text-align: center; margin: 40px 0; }
         .page{display:none; min-height:100vh; padding:20px; padding-top:80px; flex-direction:column; align-items:center;}
         .page.active{display:flex}
-        
         .topbar{position:fixed; top:0; width:100%; height:60px; background:rgba(5,7,10,0.8); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid var(--border); z-index:100;}
-        .logo-small{font-family:'Orbitron',sans-serif; color:var(--accent); font-weight:900; letter-spacing:2px;}
-
         .vertical-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; margin: 0 auto; }
-
         .search-section { background: var(--card); border: 1px solid var(--accent); border-radius: 15px; padding: 15px; }
-        #chat-box { max-height: 200px; overflow-y: auto; margin-bottom: 10px; font-size: 0.9rem; text-align: left; color: #ccc; border-bottom: 1px solid var(--border); padding-bottom: 10px; scroll-behavior: smooth;}
-        .search-input-group { display: flex; gap: 10px; }
-        
-        input, textarea { width: 100%; padding: 12px; background: #161b22; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: inherit; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
+        #chat-box { max-height: 150px; overflow-y: auto; margin-bottom: 10px; font-size: 0.9rem; text-align: left; color: #ccc; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        input, textarea { width: 100%; padding: 12px; background: #161b22; border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 10px; border: 1px solid var(--border); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; text-align: center; transition: 0.3s; }
         .card:hover { border-color: var(--accent); transform: translateY(-3px); }
         .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
         #toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--green); padding:12px 24px; border-radius:8px; display:none; z-index:1000;}
+        .vault-item { background: #161b22; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; text-align: left; }
     </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="logo-small">XUNIVERSE</div>
+    <div style="font-family:'Orbitron',sans-serif; color:var(--accent); font-weight:900;">XUNIVERSE</div>
     <button id="logoutBtn" style="display:none; background:none; border:1px solid var(--border); color:#8b949e; padding:5px 10px; border-radius:4px;" onclick="location.reload()">Logout</button>
 </div>
 
@@ -54,16 +47,15 @@
         <div class="search-section">
             <h4 style="margin-bottom:10px; color:var(--accent);">AI VAULT SEARCH</h4>
             <div id="chat-box"></div>
-            <div class="search-input-group">
+            <div style="display:flex; gap:10px;">
                 <input type="text" id="userInput" placeholder="Ask Gemini..." onkeydown="if(event.key==='Enter') sendMessage()"/>
                 <button class="btn" style="width:80px;" onclick="sendMessage()">GO</button>
             </div>
         </div>
-
         <div class="card" onclick="showPage('pg-wish')"><h3>🌟 Wish Me</h3><p>Drop a message</p></div>
-        <div class="card" onclick="showPage('pg-store')"><h3>📁 Store</h3><p>Upload Files</p></div>
-        <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3></div>
-        
+        <div class="card" onclick="showPage('pg-store')"><h3>📁 Store</h3><p>Upload General Files</p></div>
+        <div class="card" onclick="showPage('pg-music')"><h3>🎵 Save Music</h3><p>Add to Audio Vault</p></div>
+        <div class="card" onclick="showPage('pg-contact')"><h3>📞 Save Contact</h3><p>Sync details</p></div>
         <div id="admin-card" class="card" style="display:none; border:2px solid var(--accent);" onclick="openVault()">
             <h3 style="color:var(--accent);">🛡️ OWNER VAULT</h3>
         </div>
@@ -73,8 +65,7 @@
 <div class="page" id="pg-wish">
     <div class="card" style="max-width:450px;">
         <h3>Send Wish</h3><br>
-        <input id="w-name" placeholder="Your Name"/><br>
-        <textarea id="w-msg" placeholder="Message"></textarea><br>
+        <input id="w-name" placeholder="Your Name"/><textarea id="w-msg" placeholder="Message"></textarea>
         <button class="btn" onclick="sendWish()">SEND</button>
         <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
@@ -82,16 +73,32 @@
 
 <div class="page" id="pg-store">
     <div class="card" style="max-width:450px;">
-        <h3>Upload File</h3><br>
+        <h3>Upload General File</h3><br>
         <input type="file" id="up-store" onchange="handleUp('store', 'up-store')"/>
+        <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
+    </div>
+</div>
+
+<div class="page" id="pg-music">
+    <div class="card" style="max-width:450px;">
+        <h3>Upload Music/Audio</h3><br>
+        <input type="file" id="up-music" onchange="handleUp('music', 'up-music')"/>
+        <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
+    </div>
+</div>
+
+<div class="page" id="pg-contact">
+    <div class="card" style="max-width:450px;">
+        <h3>Save Contact</h3><br>
+        <input id="c-name" placeholder="Name"/><input id="c-number" placeholder="Phone Number"/>
+        <button class="btn" onclick="sendContact()">SAVE</button>
         <button class="btn" style="background:#30363d; margin-top:10px;" onclick="showPage('pg-dash')">BACK</button>
     </div>
 </div>
 
 <div class="page" id="pg-vault">
     <button class="btn" style="max-width:120px; margin-bottom:20px; background:#30363d" onclick="showPage('pg-dash')">BACK</button>
-    <div id="v-wishes"></div>
-    <div id="v-store"></div>
+    <div id="v-content" style="width:100%; max-width:500px; display:flex; flex-direction:column; gap:15px;"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -101,10 +108,7 @@ const S_URL = 'https://tvjztcrpyunwmkuaisi.supabase.co';
 const S_KEY = 'sb_publishable_eIHuOUIEe3BkfnA7tjcAgg_7YY9yqb6';
 const _sb = supabase.createClient(S_URL, S_KEY);
 
-function showPage(id){ 
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
-    document.getElementById(id).classList.add('active'); 
-}
+function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
 function handleLogin(){ 
     if(document.getElementById('user-id').value==='Marshall' && document.getElementById('user-pw').value==='123456798'){ 
@@ -116,48 +120,64 @@ function handleLogin(){
 
 async function sendMessage() {
     const input = document.getElementById('userInput');
-    const msg = input.value;
-    if(!msg) return;
     const box = document.getElementById('chat-box');
-    box.innerHTML += `<p style="color:#3d7fff;"><b>You:</b> ${msg}</p>`;
+    const msg = input.value; if(!msg) return;
+    box.innerHTML += `<p style="color:var(--accent);"><b>You:</b> ${msg}</p>`;
     input.value = "";
-
     try {
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts: [{ text: msg }] }] })
         });
-        const data = await resp.json();
-        if (data.error) {
-            box.innerHTML += `<p style="color:red;"><b>Error:</b> ${data.error.message}</p>`;
-        } else {
-            const reply = data.candidates[0].content.parts[0].text;
-            box.innerHTML += `<p><b>AI:</b> ${reply.replace(/\n/g, '<br>')}</p>`;
-        }
+        const d = await r.json();
+        const reply = d.candidates[0].content.parts[0].text;
+        box.innerHTML += `<p><b>AI:</b> ${reply.replace(/\n/g, '<br>')}</p>`;
         box.scrollTop = box.scrollHeight;
-    } catch(e) { box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key or Internet.</p>`; }
+        await _sb.from('xuniverse_ai_chats').insert([{ user_message: msg, bot_response: reply }]);
+    } catch(e) { box.innerHTML += `<p style="color:red;">Error connecting to AI</p>`; }
 }
 
 async function sendWish(){
-    const name = document.getElementById('w-name').value;
-    const text = document.getElementById('w-msg').value;
-    if(!name || !text) return alert("Fill all fields");
-    await _sb.from('Wishes').insert([{ Name: name, Text: text }]);
+    await _sb.from('Wishes').insert([{ Name: document.getElementById('w-name').value, Text: document.getElementById('w-msg').value }]);
     toast("Wish Sent!");
+}
+
+async function sendContact(){
+    await _sb.from('Contacts').insert([{ Name: document.getElementById('c-name').value, Number: document.getElementById('c-number').value }]);
+    toast("Contact Saved!");
 }
 
 async function handleUp(b, i){
     const f = document.getElementById(i).files[0]; if(!f) return;
-    toast("Uploading...");
-    await _sb.storage.from(b).upload(`${Date.now()}_${f.name}`, f);
-    toast("Done!");
+    toast(`Uploading to ${b}...`);
+    const { data, error } = await _sb.storage.from(b).upload(`${Date.now()}_${f.name}`, f);
+    if(error) { alert("Upload error: " + error.message); } else { toast("Done!"); }
 }
 
-function openVault(){ if(prompt("Security Key:")==='Ankit@9905296'){ showPage('pg-vault'); } }
+function openVault(){ if(prompt("Security Key:")==='Ankit@9905296'){ showPage('pg-vault'); loadVaultData(); } }
+
+async function loadVaultData(){
+    const out = document.getElementById('v-content');
+    out.innerHTML = "<p style='text-align:center'>Synchronizing Vault...</p>";
+    
+    const { data: w } = await _sb.from('Wishes').select('*');
+    const { data: c } = await _sb.from('Contacts').select('*');
+    const { data: chats } = await _sb.from('xuniverse_ai_chats').select('*');
+    const { data: genFiles } = await _sb.storage.from('store').list();
+    const { data: musFiles } = await _sb.storage.from('music').list();
+    
+    let html = "<h2 style='color:var(--accent); text-align:center;'>DATABASE CONTENTS</h2>";
+    
+    html += "<h4>WISH MESSAGES</h4>" + (w?.length ? w.map(i => `<div class='vault-item'><b>${i.Name}:</b> ${i.Text}</div>`).join('') : "<p>No data</p>");
+    html += "<h4>SAVED CONTACTS</h4>" + (c?.length ? c.map(i => `<div class='vault-item'><b>${i.Name}:</b> ${i.Number}</div>`).join('') : "<p>No data</p>");
+    html += "<h4>AI CHATS</h4>" + (chats?.length ? chats.map(i => `<div class='vault-item' style='font-size:0.8rem'><b>Msg:</b> ${i.user_message}<br><b>AI:</b> ${i.bot_response}</div>`).join('') : "<p>No history</p>");
+    html += "<h4>STORED FILES</h4>" + (genFiles?.length ? genFiles.filter(i=>i.name!=='.emptyFolderPlaceholder').map(i => `<div class='vault-item'>${i.name}</div>`).join('') : "<p>No files</p>");
+    html += "<h4>MUSIC LIBRARY</h4>" + (musFiles?.length ? musFiles.filter(i=>i.name!=='.emptyFolderPlaceholder').map(i => `<div class='vault-item'>${i.name}</div>`).join('') : "<p>No music</p>");
+
+    out.innerHTML = html;
+}
+
 function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
 </script>
 </body>
 </html>
-
-        
