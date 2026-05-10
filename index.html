@@ -123,22 +123,26 @@ async function sendMessage() {
     input.value = "";
 
     try {
-        // This uses the correct stable version and model name
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+        // FIXED: Using 'gemini-3.1-flash-lite' which is the current GA model
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts: [{ text: msg }] }] })
         });
         const data = await resp.json();
+        
         if (data.error) {
             box.innerHTML += `<p style="color:red;"><b>Error:</b> ${data.error.message}</p>`;
-        } else {
+        } else if (data.candidates && data.candidates[0].content) {
             const reply = data.candidates[0].content.parts[0].text;
             box.innerHTML += `<p><b>AI:</b> ${reply.replace(/\n/g, '<br>')}</p>`;
         }
         box.scrollTop = box.scrollHeight;
-    } catch(e) { box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key or Internet.</p>`; }
-}    
+    } catch(e) { 
+        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key or Internet connection.</p>`; 
+    }
+}
+
 
 async function sendWish(){
     const name = document.getElementById('w-name').value;
