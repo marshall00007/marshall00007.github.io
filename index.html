@@ -159,8 +159,52 @@ async function handleUp(b, i){
     toast("Done!");
 }
 
-function openVault(){ if(prompt("Security Key:")==='Ankit@9905296'){ showPage('pg-vault'); } }
-function toast(m){ const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
+async function openVault(){ 
+    if(prompt("Security Key:") === 'Ankit@9905296'){ 
+        showPage('pg-vault'); 
+        loadVaultData(); // This was missing - it pulls your data from Supabase
+    } 
+}
+
+async function loadVaultData() {
+    const wishBox = document.getElementById('v-wishes');
+    const storeBox = document.getElementById('v-store');
+    
+    wishBox.innerHTML = "<h3 style='color:var(--accent)'>Wishes</h3><br>";
+    storeBox.innerHTML = "<h3 style='color:var(--accent)'>Stored Files</h3><br>";
+
+    // 1. Fetch and Display Wishes
+    const { data: wishes } = await _sb.from('Wishes').select('*').order('created_at', { ascending: false });
+    if(wishes) {
+        wishes.forEach(w => {
+            wishBox.innerHTML += `<div class="card" style="text-align:left; margin-bottom:10px;">
+                <b>${w.Name}:</b> ${w.Text}
+            </div>`;
+        });
+    }
+
+    // 2. Fetch and Display Files from Storage
+    const { data: files } = await _sb.storage.from('store').list();
+    if(files) {
+        files.forEach(f => {
+            if(f.name !== '.emptyFolderPlaceholder') {
+                const url = _sb.storage.from('store').getPublicUrl(f.name).data.publicUrl;
+                storeBox.innerHTML += `<div class="card" style="margin-bottom:10px;">
+                    <p>${f.name}</p>
+                    <a href="${url}" target="_blank" style="color:var(--accent); font-size:0.8rem;">View File</a>
+                </div>`;
+            }
+        });
+    }
+}
+
+function toast(m){ 
+    const t = document.getElementById('toast'); 
+    t.innerText = m; 
+    t.style.display = 'block'; 
+    setTimeout(() => t.style.display = 'none', 3000); 
+}
 </script>
+
 </body>
 </html>
