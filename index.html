@@ -123,12 +123,13 @@ async function sendMessage() {
     input.value = "";
 
     try {
-        // FIXED: Using 'gemini-3.1-flash-lite' which is the current GA model
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`, {
+        // FIXED URL: Using v1beta and the new stable gemini-3.1-flash-lite model
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts: [{ text: msg }] }] })
         });
+        
         const data = await resp.json();
         
         if (data.error) {
@@ -139,10 +140,9 @@ async function sendMessage() {
         }
         box.scrollTop = box.scrollHeight;
     } catch(e) { 
-        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Check Key or Internet connection.</p>`; 
+        box.innerHTML += `<p style="color:red;"><b>System Error:</b> Connection failed. Check your API key.</p>`; 
     }
 }
-
 
 async function sendWish(){
     const name = document.getElementById('w-name').value;
